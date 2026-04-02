@@ -1,369 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FreshPlate 🌿</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com"/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{--bg:#F7F4EE;--surface:#FFFFFF;--green:#1E4D2B;--green2:#2D6A3F;--green3:#4A8C5C;--terra:#C4622D;--terra2:#E07A45;--gold:#B8963E;--gold2:#D4AE5A;--text:#1A1A1A;--muted:#6B6357;--border:#DDD7CC;--cs:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.08);--csh:0 4px 8px rgba(0,0,0,0.08),0 12px 32px rgba(0,0,0,0.13);--r:14px}
-    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-    h1,h2,h3{font-family:'Playfair Display',serif}
-    input,button,select,textarea{font-family:'DM Sans',sans-serif}
-    .nav{background:var(--green);height:auto;min-height:56px;padding:8px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.22)}
-    .brand{font-family:'Playfair Display',serif;font-size:1.35rem;color:white;display:flex;align-items:center;gap:8px;flex-shrink:0}
-    .brand span{font-size:0.68rem;background:rgba(255,255,255,0.18);border-radius:10px;padding:2px 8px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.5px}
-    .nav-tabs{display:flex;gap:4px;flex-wrap:wrap}
-    .ntab{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.85);padding:6px 14px;border-radius:20px;cursor:pointer;font-size:0.8rem;font-weight:500;transition:all .15s}
-    .ntab:hover{background:rgba(255,255,255,0.2)}
-    .ntab.on{background:var(--terra);border-color:var(--terra);color:white;font-weight:700}
-    .wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
-    .page-title{font-family:'Playfair Display',serif;font-size:1.85rem;color:var(--green);line-height:1.15}
-    .page-sub{color:var(--muted);font-size:0.87rem;margin-top:3px;margin-bottom:20px}
-    .filter-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:18px;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-    .fp-header{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
-    .fp-title{font-weight:700;font-size:0.85rem;color:var(--green);display:flex;align-items:center;gap:6px}
-    .fp-badge{background:var(--terra);color:white;border-radius:10px;padding:1px 7px;font-size:0.68rem;font-weight:700}
-    .fp-body{margin-top:14px;display:flex;flex-direction:column;gap:14px}
-    .fp-section{font-size:0.7rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:-2px}
-    .fp-toggle{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
-    .fp-toggle input[type=checkbox]{width:15px;height:15px;accent-color:var(--green);cursor:pointer}
-    .fp-toggle-lbl{font-size:0.8rem;font-weight:500}
-    .fp-slider-wrap{display:flex;align-items:center;gap:10px;flex:1;min-width:200px}
-    .fp-slider-lbl{font-size:0.78rem;font-weight:600;white-space:nowrap;min-width:140px}
-    .fp-slider{flex:1;accent-color:var(--green);cursor:pointer}
-    .fp-slider-val{font-size:0.78rem;font-weight:700;color:var(--green);min-width:36px;text-align:right}
-    .cat-chips{display:flex;flex-wrap:wrap;gap:6px}
-    .cchip{border:1.5px solid var(--border);border-radius:12px;padding:4px 11px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:all .13s;background:white;color:var(--text)}
-    .cchip.excluded{background:#FFEBEE;color:#C0392B;border-color:#C0392B}
-    .cchip.included{background:#E8F5E9;color:var(--green);border-color:var(--green)}
-    .fp-reset{border:none;background:none;color:var(--muted);font-size:0.76rem;font-weight:700;cursor:pointer;text-decoration:underline;padding:0}
-    .controls{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 18px;margin-bottom:18px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;box-shadow:0 1px 4px rgba(0,0,0,0.05)}
-    .ctrl{display:flex;align-items:center;gap:8px}
-    .ctrl-lbl{font-size:0.72rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
-    .num-ctrl{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
-    .num-btn{width:32px;height:32px;border:none;background:#F2EFE9;color:var(--text);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
-    .num-val{width:36px;text-align:center;font-size:0.9rem;font-weight:700;border:none;border-left:1.5px solid var(--border);border-right:1.5px solid var(--border);padding:6px 0;color:var(--green);background:white;outline:none}
-    .regen{background:var(--terra);color:white;border:none;padding:8px 20px;border-radius:20px;font-weight:700;font-size:0.83rem;cursor:pointer;transition:all .15s}
-    .regen:hover{background:var(--terra2);transform:translateY(-1px)}
-    .meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:18px;margin-bottom:26px}
-    .mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--cs);transition:box-shadow .2s,transform .2s;display:flex;flex-direction:column}
-    .mcard:hover{box-shadow:var(--csh);transform:translateY(-2px)}
-    .mcard.pinned{border:2px solid var(--gold)}
-    .mcard.snoozed{opacity:0.55;border:1px dashed var(--border)}
-    .mcard-top{background:linear-gradient(135deg,var(--green) 0%,var(--green2) 60%,var(--green3) 100%);padding:16px 16px 12px;color:white}
-    .mcard-top-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2px}
-    .mcard-badge{background:rgba(255,255,255,0.18);border-radius:12px;padding:2px 8px;font-size:0.7rem;font-weight:700}
-    .icon-btn{background:none;border:none;cursor:pointer;font-size:1rem;line-height:1;padding:2px;opacity:0.8;transition:transform .15s}
-    .icon-btn:hover{transform:scale(1.2);opacity:1}
-    .mcard-cat{font-size:0.65rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;opacity:.7;margin-bottom:3px}
-    .mcard-name{font-family:'Playfair Display',serif;font-size:1.05rem;line-height:1.25;margin-bottom:4px}
-    .mcard-meta{font-size:0.76rem;opacity:.88;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-    .density-row{display:flex;gap:8px;font-size:0.72rem;opacity:.88;margin-top:4px;flex-wrap:wrap}
-    .density-pill{background:rgba(255,255,255,0.18);border-radius:8px;padding:2px 7px;font-weight:700}
-    .mcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
-    .mtag{background:rgba(255,255,255,0.16);border-radius:10px;padding:2px 7px;font-size:0.66rem;font-weight:700}
-    .mcard-body{padding:13px 15px;flex:1;display:flex;flex-direction:column;gap:9px}
-    .mcard-steps{font-size:0.82rem;color:var(--muted);line-height:1.55}
-    .macro-bar{background:#F4FAF6;border-radius:9px;padding:9px 11px}
-    .macro-bar-title{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:7px}
-    .macro-row{display:flex;gap:8px}
-    .macro-item{flex:1;text-align:center}
-    .macro-val{font-size:0.95rem;font-weight:700}
-    .macro-lbl{font-size:0.62rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
-    .macro-bar-bg{height:4px;border-radius:2px;background:#DDD;margin-top:4px;overflow:hidden}
-    .macro-bar-fill{height:4px;border-radius:2px}
-    .ing-toggle{background:none;border:none;cursor:pointer;font-size:0.73rem;font-weight:700;color:var(--green);display:flex;align-items:center;gap:4px;padding:0}
-    .ing-row{display:flex;justify-content:space-between;font-size:0.78rem;padding:2px 0;border-bottom:1px solid #F3EFE8}
-    .ing-price{color:var(--green);font-weight:700;font-size:0.76rem}
-    .store-row{display:flex;gap:7px}
-    .schip{flex:1;border:1.5px solid var(--border);border-radius:9px;padding:7px 9px;text-align:center}
-    .schip.best{border-color:var(--gold);background:#FDFBF3}
-    .schip-name{font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
-    .schip-price{font-size:0.95rem;font-weight:700;color:var(--green);margin-top:1px}
-    .schip-badge{font-size:0.62rem;font-weight:700;color:var(--terra);margin-top:1px}
-    .rating-wrap{border-top:1px solid var(--border);padding-top:9px}
-    .rating-lbl{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px}
-    .stars{display:flex;gap:4px}
-    .star{font-size:1.3rem;cursor:pointer;transition:transform .1s;color:#D5CFC5;line-height:1}
-    .star.on{color:var(--gold2)}
-    .star:hover{transform:scale(1.2)}
-    .fb-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:5px}
-    .fbchip{border:1.5px solid var(--border);border-radius:12px;padding:3px 9px;font-size:0.7rem;font-weight:700;cursor:pointer;transition:all .13s;background:white;color:var(--muted)}
-    .fbchip.li{background:var(--green);color:white;border-color:var(--green)}
-    .fbchip.di{background:#C0392B;color:white;border-color:#C0392B}
-    .card-acts{display:flex;gap:6px;margin-top:2px}
-    .cact{flex:1;border:1.5px solid var(--border);background:white;border-radius:8px;padding:6px;font-size:0.73rem;font-weight:700;cursor:pointer;transition:all .13s;color:var(--text)}
-    .cact:hover{border-color:var(--green);color:var(--green);background:#F2FAF4}
-    .summary{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--cs)}
-    .sum-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:14px}
-    .store-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
-    .scard{border:2px solid var(--border);border-radius:11px;padding:14px 16px;position:relative}
-    .scard.win{border-color:var(--gold);background:#FDFBF5}
-    .win-badge{position:absolute;top:-9px;right:11px;background:var(--gold);color:white;font-size:0.62rem;font-weight:700;padding:2px 8px;border-radius:7px;letter-spacing:.5px;text-transform:uppercase}
-    .scard-name{font-weight:700;font-size:0.92rem;margin-bottom:1px}
-    .scard-addr{font-size:0.7rem;color:var(--muted);margin-bottom:8px}
-    .scard-total{font-size:1.75rem;font-weight:700;color:var(--green)}
-    .scard-sub{font-size:0.7rem;color:var(--muted);margin-top:2px}
-    .save-note{font-size:0.83rem;color:var(--muted)}
-    .nut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
-    .nut-box{background:#F4FAF6;border-radius:10px;padding:10px;text-align:center}
-    .nut-val{font-size:1.3rem;font-weight:700;color:var(--green)}
-    .nut-lbl{font-size:0.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
-    .ai-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;box-shadow:var(--cs);margin-bottom:20px}
-    .ai-title{font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--green);margin-bottom:3px}
-    .ai-sub{font-size:0.8rem;color:var(--muted);margin-bottom:10px}
-    .ai-row{display:flex;gap:7px}
-    .ai-in{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 12px;font-size:0.86rem;outline:none}
-    .ai-in:focus{border-color:var(--green)}
-    .ai-go{background:var(--green);color:white;border:none;padding:8px 16px;border-radius:8px;font-weight:700;font-size:0.83rem;cursor:pointer}
-    .ai-go:disabled{opacity:.5;cursor:not-allowed}
-    .ai-resp{margin-top:10px;background:#F4FAF6;border:1px solid #C5DECA;border-radius:8px;padding:11px 13px;font-size:0.83rem;line-height:1.6;white-space:pre-wrap}
-    .taste-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-top:14px}
-    .tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;box-shadow:var(--cs)}
-    .tcard-name{font-family:'Playfair Display',serif;font-size:0.9rem;margin-bottom:3px}
-    .tcard-stars{color:var(--gold2);font-size:0.82rem;font-weight:700;margin-bottom:6px}
-    .t-like{background:#E8F5E9;color:#1E4D2B;border-radius:9px;padding:2px 8px;font-size:0.68rem;font-weight:700;display:inline-block;margin:2px}
-    .t-dis{background:#FFEBEE;color:#C0392B;border-radius:9px;padding:2px 8px;font-size:0.68rem;font-weight:700;display:inline-block;margin:2px}
-    .ing-table{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--cs)}
-    .ing-thead th{background:var(--green);color:white;padding:9px 13px;font-size:0.72rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;text-align:left}
-    .ing-tbody tr:nth-child(odd){background:#FAFAF8}
-    .ing-tbody td{padding:8px 13px;font-size:0.82rem;border-bottom:1px solid var(--border)}
-    .ing-best{color:var(--terra);font-weight:700}
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
-    .modal{background:var(--surface);border-radius:var(--r);padding:24px 26px;max-width:580px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,0.22)}
-    .modal-title{font-family:'Playfair Display',serif;font-size:1.3rem;color:var(--green);margin-bottom:16px}
-    .form-row{margin-bottom:12px}
-    .form-lbl{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;display:block}
-    .form-in{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:0.86rem;outline:none;background:white}
-    .form-in:focus{border-color:var(--green)}
-    .form-row-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .form-textarea{resize:vertical;min-height:72px}
-    .modal-acts{display:flex;gap:8px;margin-top:16px}
-    .btn-primary{flex:1;background:var(--green);color:white;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:0.86rem;cursor:pointer}
-    .btn-cancel{background:none;border:1.5px solid var(--border);padding:10px 16px;border-radius:9px;font-weight:700;font-size:0.86rem;cursor:pointer;color:var(--muted)}
-    .add-meal-btn{background:var(--green);color:white;border:none;padding:8px 18px;border-radius:20px;font-weight:700;font-size:0.82rem;cursor:pointer}
-    .export-btn{background:var(--gold);color:white;border:none;padding:8px 16px;border-radius:20px;font-weight:700;font-size:0.78rem;cursor:pointer}
-    .ai-recipe-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:white;border:none;padding:9px 18px;border-radius:20px;font-weight:700;font-size:0.82rem;cursor:pointer}
-    /* ── MOBILE ── */
-    @media(max-width:768px){
-      .nav{padding:8px 12px}
-      .brand{font-size:1.1rem}
-      .brand span{display:none}
-      .nav-tabs{width:100%;justify-content:space-between}
-      .ntab{padding:5px 8px;font-size:0.72rem;flex:1;text-align:center}
-      .wrap{padding:12px 10px 80px}
-      .page-title{font-size:1.4rem}
-      .store-grid{grid-template-columns:1fr}
-      .meal-grid{grid-template-columns:1fr}
-      .nut-grid{grid-template-columns:1fr 1fr}
-      .controls{gap:8px;padding:10px 12px}
-      .fp-slider-wrap{flex-direction:column;align-items:flex-start;gap:4px;min-width:unset}
-      .fp-slider{width:100%}
-      .fp-slider-lbl{min-width:unset}
-      .cat-chips{gap:5px}
-      .cchip{font-size:0.7rem;padding:3px 9px}
-      .mcard-name{font-size:0.95rem}
-      .macro-row{gap:4px}
-      .macro-val{font-size:0.85rem}
-      .density-row{gap:4px}
-      .density-pill{font-size:0.66rem}
-      .store-row{gap:5px}
-      .schip{padding:6px 7px}
-      .schip-price{font-size:0.85rem}
-      .card-acts{gap:4px}
-      .cact{font-size:0.68rem;padding:5px}
-      .summary{padding:14px}
-      .scard-total{font-size:1.4rem}
-      .ing-thead th{padding:7px 8px;font-size:0.65rem}
-      .ing-tbody td{padding:6px 8px;font-size:0.76rem}
-      .modal{padding:18px 14px;max-height:95vh}
-      .taste-grid{grid-template-columns:1fr}
-      .fb-chips{gap:3px}
-      .fbchip{font-size:0.65rem;padding:2px 7px}
-      .fp-body{gap:10px}
-    }
-    @media(max-width:400px){
-      .ntab{font-size:0.66rem;padding:4px 6px}
-      .mcard-body{padding:10px 11px}
-      .mcard-top{padding:12px 12px 10px}
-    }
-    /* shared plan view */
-    .sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:28px}
-    @media(max-width:600px){
-      .sp-grid{grid-template-columns:1fr}
-      .sp-nav{flex-direction:column !important;align-items:flex-start !important;gap:4px !important;padding:12px 16px !important}
-      .sp-wrap{padding:16px 12px 60px !important}
-      .sp-h1{font-size:1.3rem !important}
-    }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>FreshPlate 🌿</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F7F4EE;--surface:#fff;--green:#1E4D2B;--green2:#2D6A3F;--green3:#4A8C5C;
+  --terra:#C4622D;--terra2:#E07A45;--gold:#B8963E;--gold2:#D4AE5A;
+  --text:#1A1A1A;--muted:#6B6357;--border:#DDD7CC;
+  --cs:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.08);
+  --csh:0 4px 8px rgba(0,0,0,.08),0 12px 32px rgba(0,0,0,.13);--r:14px;
+  --nav-h:56px;--bot-h:64px;
+}
+html,body{height:100%;overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text)}
+h1,h2,h3{font-family:'Playfair Display',serif}
+input,button,select,textarea{font-family:'DM Sans',sans-serif}
+button{cursor:pointer}
+/* ── LAYOUT ── */
+#root{display:flex;flex-direction:column;min-height:100vh}
+.top-nav{background:var(--green);height:var(--nav-h);padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,.22);flex-shrink:0}
+.brand{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;display:flex;align-items:center;gap:8px}
+.brand-pill{font-size:.65rem;background:rgba(255,255,255,.18);border-radius:10px;padding:2px 8px;font-family:'DM Sans',sans-serif;font-weight:700;letter-spacing:.5px}
+.top-nav-right{display:flex;gap:8px;align-items:center}
+.icon-action{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:20px;padding:5px 12px;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:5px}
+/* desktop tabs */
+.desk-tabs{display:flex;gap:4px}
+.dtab{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:rgba(255,255,255,.85);padding:6px 14px;border-radius:20px;font-size:.78rem;font-weight:500;transition:all .15s;border:none}
+.dtab:hover{background:rgba(255,255,255,.2)}
+.dtab.on{background:var(--terra);color:#fff;font-weight:700}
+/* mobile bottom tabs */
+.bot-nav{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--bot-h);background:#fff;border-top:1px solid var(--border);z-index:100;box-shadow:0 -4px 20px rgba(0,0,0,.08)}
+.bot-tabs{display:flex;height:100%}
+.btab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;font-size:.62rem;font-weight:600;color:var(--muted);transition:color .15s;padding-bottom:env(safe-area-inset-bottom,0px)}
+.btab .bico{font-size:1.35rem;line-height:1}
+.btab.on{color:var(--green)}
+.btab.on .bico{transform:scale(1.1)}
+.page-wrap{flex:1;max-width:1180px;margin:0 auto;width:100%;padding:22px 20px 30px}
+/* ── CARDS ── */
+.meal-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--cs);display:flex;flex-direction:column;transition:box-shadow .2s,transform .2s}
+.mcard:hover{box-shadow:var(--csh);transform:translateY(-2px)}
+.mcard.pinned{border:2px solid var(--gold)}
+.mcard-top{background:linear-gradient(135deg,var(--green),var(--green2) 60%,var(--green3));padding:14px 14px 10px;color:#fff;position:relative}
+.mcard-badges{display:flex;gap:6px;align-items:center;margin-bottom:6px;flex-wrap:wrap}
+.mbadge{background:rgba(255,255,255,.18);border-radius:10px;padding:2px 8px;font-size:.68rem;font-weight:700}
+.mbadge.toddler{background:rgba(255,220,60,.35);border:1px solid rgba(255,200,0,.4)}
+.mcard-name{font-family:'Playfair Display',serif;font-size:1rem;line-height:1.25;margin-bottom:6px;padding-right:32px}
+.mcard-meta{font-size:.73rem;opacity:.85;display:flex;gap:10px;flex-wrap:wrap}
+.mcard-pin{position:absolute;top:12px;right:12px;background:none;border:none;font-size:1rem;opacity:.8;color:#fff}
+.mcard-pin:hover{opacity:1;transform:scale(1.2)}
+.mcard-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:7px}
+.mtag{background:rgba(255,255,255,.15);border-radius:8px;padding:2px 7px;font-size:.63rem;font-weight:700}
+.mcard-body{padding:12px 14px;flex:1;display:flex;flex-direction:column;gap:8px}
+.mcard-steps{font-size:.81rem;color:var(--muted);line-height:1.55}
+/* macros */
+.macro-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:#F4FAF6;border-radius:9px;padding:8px 10px}
+.ms-item{text-align:center}
+.ms-val{font-size:.9rem;font-weight:700;color:var(--green)}
+.ms-lbl{font-size:.58rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.ms-bar{height:3px;border-radius:2px;background:#DDD;margin-top:3px;overflow:hidden}
+.ms-fill{height:3px;border-radius:2px}
+/* density */
+.density-row{display:flex;gap:6px;flex-wrap:wrap}
+.dp{background:rgba(255,255,255,.18);border-radius:7px;padding:2px 7px;font-size:.65rem;font-weight:700}
+/* ingredients */
+.ing-toggle{background:none;border:none;font-size:.72rem;font-weight:700;color:var(--green);padding:0;display:flex;align-items:center;gap:3px}
+.ing-row{display:flex;justify-content:space-between;font-size:.77rem;padding:3px 0;border-bottom:1px solid #F3EFE8}
+.ing-price{color:var(--green);font-weight:700;font-size:.74rem}
+/* store chips */
+.store-row{display:flex;gap:6px}
+.schip{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:6px 8px;text-align:center}
+.schip.best{border-color:var(--gold);background:#FDFBF3}
+.schip-name{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+.schip-price{font-size:.9rem;font-weight:700;color:var(--green);margin-top:1px}
+.schip-badge{font-size:.6rem;font-weight:700;color:var(--terra)}
+/* rating */
+.rating-wrap{border-top:1px solid var(--border);padding-top:8px}
+.rlbl{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px}
+.stars{display:flex;gap:3px}
+.star{font-size:1.4rem;color:#D5CFC5;line-height:1;transition:transform .1s}
+.star.on{color:var(--gold2)}
+.star:hover{transform:scale(1.2)}
+.fb-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+.fbchip{border:1.5px solid var(--border);border-radius:10px;padding:3px 8px;font-size:.67rem;font-weight:700;background:#fff;color:var(--muted);transition:all .13s}
+.fbchip.li{background:var(--green);color:#fff;border-color:var(--green)}
+.fbchip.di{background:#C0392B;color:#fff;border-color:#C0392B}
+/* card actions */
+.card-acts{display:flex;gap:5px;margin-top:2px}
+.cact{flex:1;border:1.5px solid var(--border);background:#fff;border-radius:8px;padding:7px 5px;font-size:.7rem;font-weight:700;transition:all .13s;color:var(--text)}
+.cact:hover{border-color:var(--green);color:var(--green);background:#F2FAF4}
+.cact.red{border-color:#E0C8C8;color:#A93226}
+/* cook mode */
+.cook-btn{background:var(--green);color:#fff;border:none;border-radius:8px;padding:7px;font-size:.7rem;font-weight:700;flex:1}
+/* notes */
+.note-in{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:6px 9px;font-size:.78rem;resize:none;outline:none;min-height:52px}
+.note-in:focus{border-color:var(--green)}
+/* ── PANELS ── */
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:16px;box-shadow:var(--cs)}
+.panel-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green);margin-bottom:12px}
+/* filters */
+.fp-hdr{display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none}
+.fp-title{font-weight:700;font-size:.84rem;color:var(--green);display:flex;align-items:center;gap:6px}
+.fp-badge{background:var(--terra);color:#fff;border-radius:10px;padding:1px 7px;font-size:.66rem;font-weight:700}
+.fp-body{margin-top:12px;display:flex;flex-direction:column;gap:12px}
+.fp-sec{font-size:.68rem;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:-4px}
+.fp-tog{display:flex;align-items:center;gap:7px;cursor:pointer;user-select:none}
+.fp-tog input{width:15px;height:15px;accent-color:var(--green);cursor:pointer}
+.fp-tog span{font-size:.79rem;font-weight:500}
+.sl-wrap{display:flex;align-items:center;gap:10px}
+.sl-lbl{font-size:.76rem;font-weight:600;min-width:130px;white-space:nowrap}
+.sl{flex:1;accent-color:var(--green)}
+.sl-val{font-size:.76rem;font-weight:700;color:var(--green);min-width:34px;text-align:right}
+.cat-chips{display:flex;flex-wrap:wrap;gap:5px}
+.cchip{border:1.5px solid var(--border);border-radius:10px;padding:4px 10px;font-size:.72rem;font-weight:700;background:#fff;color:var(--text);transition:all .13s}
+.cchip.exc{background:#FFEBEE;color:#C0392B;border-color:#C0392B}
+.cchip.inc{background:#E8F5E9;color:var(--green);border-color:var(--green)}
+.fp-reset{border:none;background:none;color:var(--muted);font-size:.74rem;font-weight:700;text-decoration:underline;padding:0}
+/* controls bar */
+.ctrl-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:10px 16px;margin-bottom:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;box-shadow:var(--cs)}
+.ctrl{display:flex;align-items:center;gap:7px}
+.ctrl-lbl{font-size:.68rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--muted)}
+.num-ctrl{display:flex;align-items:center;border:1.5px solid var(--border);border-radius:8px;overflow:hidden}
+.num-btn{width:32px;height:32px;border:none;background:#F2EFE9;font-size:1rem;display:flex;align-items:center;justify-content:center;color:var(--text)}
+.num-val{width:36px;text-align:center;font-size:.88rem;font-weight:700;border:none;border-left:1.5px solid var(--border);border-right:1.5px solid var(--border);padding:5px 0;color:var(--green);background:#fff;outline:none}
+.regen{background:var(--terra);color:#fff;border:none;padding:8px 18px;border-radius:18px;font-weight:700;font-size:.8rem;transition:all .15s;margin-left:auto}
+.regen:hover{background:var(--terra2);transform:translateY(-1px)}
+.share-btn{background:var(--green);color:#fff;border:none;padding:8px 14px;border-radius:18px;font-weight:700;font-size:.8rem}
+/* summary */
+.store-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.scard{border:2px solid var(--border);border-radius:11px;padding:13px 15px;position:relative}
+.scard.win{border-color:var(--gold);background:#FDFBF5}
+.win-badge{position:absolute;top:-9px;right:10px;background:var(--gold);color:#fff;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:7px;text-transform:uppercase;letter-spacing:.4px}
+.scard-name{font-weight:700;font-size:.9rem;margin-bottom:2px}
+.scard-addr{font-size:.68rem;color:var(--muted);margin-bottom:6px}
+.scard-total{font-size:1.65rem;font-weight:700;color:var(--green)}
+.scard-sub{font-size:.68rem;color:var(--muted);margin-top:2px}
+.nut-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.nb{background:#F4FAF6;border-radius:10px;padding:9px;text-align:center}
+.nb-val{font-size:1.2rem;font-weight:700;color:var(--green)}
+.nb-lbl{font-size:.62rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:2px}
+/* AI panel */
+.ai-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;box-shadow:var(--cs);margin-bottom:16px}
+.ai-row{display:flex;gap:6px;margin-top:8px}
+.ai-in{flex:1;border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:.84rem;outline:none}
+.ai-in:focus{border-color:var(--green)}
+.ai-go{background:var(--green);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;font-size:.8rem}
+.ai-go:disabled{opacity:.5}
+.ai-resp{margin-top:8px;background:#F4FAF6;border:1px solid #C5DECA;border-radius:8px;padding:10px 12px;font-size:.8rem;line-height:1.6;white-space:pre-wrap}
+/* taste */
+.taste-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
+.tcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;box-shadow:var(--cs)}
+.tc-name{font-family:'Playfair Display',serif;font-size:.88rem;margin-bottom:3px}
+.tc-stars{color:var(--gold2);font-size:.8rem;font-weight:700;margin-bottom:5px}
+.tl{background:#E8F5E9;color:#1E4D2B;border-radius:8px;padding:2px 7px;font-size:.65rem;font-weight:700;display:inline-block;margin:2px}
+.td{background:#FFEBEE;color:#C0392B;border-radius:8px;padding:2px 7px;font-size:.65rem;font-weight:700;display:inline-block;margin:2px}
+/* shopping */
+.ing-table{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;box-shadow:var(--cs)}
+.ith th{background:var(--green);color:#fff;padding:8px 12px;font-size:.68rem;font-weight:700;letter-spacing:.4px;text-transform:uppercase;text-align:left}
+.itb tr:nth-child(odd){background:#FAFAF8}
+.itb td{padding:8px 12px;font-size:.79rem;border-bottom:1px solid var(--border)}
+.ib{color:var(--terra);font-weight:700}
+/* modals */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:flex;align-items:flex-end;justify-content:center}
+@media(min-width:600px){.ov{align-items:center}}
+.modal{background:var(--surface);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-height:92vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.2)}
+@media(min-width:600px){.modal{border-radius:var(--r);max-width:560px;max-height:88vh}}
+.modal-drag{width:40px;height:4px;background:#DDD;border-radius:2px;margin:0 auto 16px}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.2rem;color:var(--green);margin-bottom:14px}
+.form-row{margin-bottom:11px}
+.fl{font-size:.69rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:4px;display:block}
+.fi{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:8px 10px;font-size:.84rem;outline:none;background:#fff}
+.fi:focus{border-color:var(--green)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.fta{resize:vertical;min-height:68px}
+.macts{display:flex;gap:8px;margin-top:14px}
+.btn-p{flex:1;background:var(--green);color:#fff;border:none;padding:10px;border-radius:9px;font-weight:700;font-size:.84rem}
+.btn-c{background:none;border:1.5px solid var(--border);padding:10px 14px;border-radius:9px;font-weight:700;font-size:.84rem;color:var(--muted)}
+/* cook mode full-screen */
+.cook-screen{position:fixed;inset:0;background:#1E4D2B;z-index:400;display:flex;flex-direction:column;color:#fff;overflow:hidden}
+.cook-hdr{padding:16px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.15)}
+.cook-body{flex:1;overflow-y:auto;padding:24px 20px}
+.cook-step{background:rgba(255,255,255,.1);border-radius:12px;padding:16px;margin-bottom:12px;font-size:.95rem;line-height:1.6;display:flex;gap:12px;align-items:flex-start}
+.cook-step.done{opacity:.45;text-decoration:line-through}
+.cook-num{background:var(--terra);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8rem;flex-shrink:0}
+.cook-step.done .cook-num{background:rgba(255,255,255,.3)}
+.cook-ing{background:rgba(255,255,255,.08);border-radius:10px;padding:12px;margin-top:12px}
+.cook-ing-row{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.1);font-size:.82rem}
+/* pantry */
+.pantry-chip{background:#E8F5E9;border:1.5px solid var(--green3);border-radius:20px;padding:4px 10px;font-size:.72rem;font-weight:700;color:var(--green);display:inline-flex;align-items:center;gap:5px;margin:3px}
+.pantry-chip button{background:none;border:none;color:var(--green);font-size:.8rem;padding:0;line-height:1}
+/* weekly cal */
+.week-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.wday{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:8px 6px;text-align:center;min-height:80px;cursor:pointer;transition:all .13s}
+.wday:hover{border-color:var(--green3)}
+.wday.has{background:#F0FBF4;border-color:var(--green3)}
+.wday.sel{border:2px solid var(--green);background:#E8F5E9}
+.wday-lbl{font-size:.65rem;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.wday-meal{font-size:.63rem;font-weight:600;color:var(--green);line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.wday-empty{color:#CCC;font-size:.75rem;margin-top:8px}
+/* budget tracker */
+.budget-bar{background:#F4FAF6;border-radius:10px;padding:10px 14px;margin-bottom:12px}
+.bb-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:.8rem;font-weight:700}
+.bb-track{height:8px;background:#DDD;border-radius:4px;overflow:hidden}
+.bb-fill{height:8px;border-radius:4px;background:var(--green);transition:width .4s}
+.bb-fill.over{background:var(--terra)}
+/* empty states */
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty-ico{font-size:2.5rem;margin-bottom:8px}
+.empty-t{font-family:'Playfair Display',serif;font-size:1.1rem;color:var(--green);margin-bottom:6px}
+/* snoozed */
+.snz-banner{background:#FFF8E1;border:1px solid #F0C84A;border-radius:var(--r);padding:10px 14px;margin-bottom:14px}
+/* page header */
+.ph{margin-bottom:16px}
+.ph h1{font-size:1.7rem;color:var(--green);line-height:1.15}
+.ph p{color:var(--muted);font-size:.84rem;margin-top:3px}
+/* zone header */
+.zone-hdr{padding:9px 14px;font-weight:700;font-size:.84rem;display:flex;justify-content:space-between;cursor:pointer}
+/* shared view */
+.sp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin-bottom:24px}
+/* responsive */
+@media(max-width:767px){
+  .desk-tabs{display:none}
+  .bot-nav{display:block}
+  .page-wrap{padding:14px 12px calc(var(--bot-h) + 16px)}
+  .brand-pill{display:none}
+  .meal-grid{grid-template-columns:1fr}
+  .store-grid{grid-template-columns:1fr}
+  .nut-grid{grid-template-columns:1fr 1fr}
+  .ctrl-bar{gap:8px;padding:10px 12px}
+  .sl-wrap{flex-direction:column;align-items:stretch;gap:4px}
+  .sl-lbl{min-width:unset}
+  .cat-chips{gap:4px}
+  .cchip{font-size:.68rem;padding:3px 8px}
+  .taste-grid{grid-template-columns:1fr}
+  .week-cal{grid-template-columns:repeat(7,1fr);gap:3px}
+  .wday{padding:5px 3px;min-height:64px}
+  .wday-lbl{font-size:.58rem}
+  .wday-meal{font-size:.56rem;-webkit-line-clamp:2}
+  .ith th{padding:6px 8px;font-size:.62rem}
+  .itb td{padding:6px 8px;font-size:.74rem}
+}
+@media(max-width:380px){
+  .week-cal{gap:2px}
+  .wday{padding:4px 2px;min-height:58px}
+  .mcard-name{font-size:.92rem}
+}
+/* transitions */
+.fade-in{animation:fadeIn .25s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* export btn */
+.exp-btn{background:var(--gold);color:#fff;border:none;padding:8px 14px;border-radius:18px;font-weight:700;font-size:.76rem}
+.ai-rec-btn{background:linear-gradient(135deg,var(--green),var(--green2));color:#fff;border:none;padding:8px 16px;border-radius:18px;font-weight:700;font-size:.78rem;display:flex;align-items:center;gap:5px}
+.add-btn{background:var(--green);color:#fff;border:none;padding:8px 16px;border-radius:18px;font-weight:700;font-size:.78rem}
+</style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState,useEffect,useCallback,useRef}=React;
-const SK="mealplanner_v6";
-const store={get:k=>{try{const v=localStorage.getItem(k);return v?{value:v}:null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,v);}catch{}}};
+const {useState,useEffect,useCallback,useRef,useMemo}=React;
+const SK="fp_v7";
+const ls={get:k=>{try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v));}catch{}}};
 
+// ── DATA ──────────────────────────────────────────────────────
 const GP={"chicken breast":{f:3.99,s:4.49,sb:false},"chicken thighs":{f:2.99,s:3.49,sb:false},"ground beef 90/10":{f:5.49,s:5.99,sb:false},"ground turkey":{f:4.29,s:4.79,sb:false},"ground pork":{f:3.79,s:4.19,sb:false},"pork tenderloin":{f:4.99,s:5.49,sb:false},"pork chops":{f:3.99,s:4.49,sb:false},"beef sirloin":{f:8.99,s:9.49,sb:false},"beef stew meat":{f:6.99,s:7.49,sb:false},"flank steak":{f:9.49,s:9.99,sb:false},"lamb chops":{f:10.99,s:11.49,sb:false},"Italian sausage":{f:4.49,s:4.99,sb:false},"chorizo":{f:3.99,s:4.29,sb:false},"bacon":{f:5.99,s:6.49,sb:false},"eggs":{f:4.49,s:4.99,sb:true},"greek yogurt":{f:1.29,s:1.49,sb:true},"cottage cheese":{f:2.99,s:3.29,sb:true},"shredded cheese":{f:3.49,s:3.79,sb:true},"parmesan":{f:4.99,s:5.49,sb:false},"feta cheese":{f:3.99,s:4.29,sb:false},"mozzarella":{f:3.49,s:3.79,sb:false},"cream cheese":{f:2.99,s:3.29,sb:true},"black beans":{f:0.89,s:0.99,sb:true},"kidney beans":{f:0.89,s:0.99,sb:true},"pinto beans":{f:0.89,s:0.99,sb:true},"chickpeas":{f:0.99,s:1.09,sb:true},"lentils":{f:1.49,s:1.69,sb:true},"edamame":{f:2.99,s:3.29,sb:true},"tofu extra firm":{f:2.49,s:2.79,sb:false},"broccoli":{f:1.99,s:2.29,sb:false},"spinach":{f:3.49,s:3.79,sb:false},"kale":{f:2.99,s:3.29,sb:false},"bell peppers":{f:1.29,s:1.49,sb:false},"onion":{f:0.79,s:0.89,sb:false},"red onion":{f:0.99,s:1.09,sb:false},"garlic":{f:0.89,s:0.99,sb:false},"tomato":{f:1.49,s:1.69,sb:false},"cherry tomatoes":{f:3.49,s:3.79,sb:false},"cucumber":{f:0.89,s:0.99,sb:false},"zucchini":{f:1.29,s:1.49,sb:false},"mushrooms":{f:2.49,s:2.79,sb:false},"sweet potato":{f:1.49,s:1.69,sb:false},"russet potato":{f:0.99,s:1.09,sb:false},"avocado":{f:1.49,s:1.69,sb:false},"lime":{f:0.49,s:0.59,sb:false},"lemon":{f:0.59,s:0.69,sb:false},"celery":{f:1.49,s:1.69,sb:false},"carrots":{f:1.29,s:1.49,sb:true},"corn":{f:0.59,s:0.69,sb:false},"asparagus":{f:3.99,s:4.29,sb:false},"green beans":{f:1.99,s:2.19,sb:false},"cabbage":{f:1.49,s:1.69,sb:false},"bok choy":{f:1.99,s:2.29,sb:false},"rice":{f:3.99,s:4.49,sb:true},"quinoa":{f:4.99,s:5.49,sb:true},"pasta":{f:1.29,s:1.49,sb:true},"egg noodles":{f:1.99,s:2.19,sb:true},"tortillas":{f:2.99,s:3.29,sb:true},"burger buns":{f:2.49,s:2.79,sb:true},"bread":{f:2.99,s:3.29,sb:true},"panko breadcrumbs":{f:2.49,s:2.79,sb:false},"canned tomatoes":{f:1.09,s:1.29,sb:true},"tomato paste":{f:0.79,s:0.89,sb:true},"salsa":{f:2.99,s:3.29,sb:true},"chicken broth":{f:1.99,s:2.19,sb:true},"beef broth":{f:1.99,s:2.19,sb:true},"coconut milk":{f:2.29,s:2.49,sb:false},"soy sauce":{f:2.49,s:2.79,sb:false},"oyster sauce":{f:3.29,s:3.59,sb:false},"sriracha":{f:3.49,s:3.79,sb:false},"hot sauce":{f:2.49,s:2.79,sb:false},"sesame oil":{f:3.99,s:4.29,sb:false},"olive oil":{f:6.99,s:7.49,sb:false},"butter":{f:4.49,s:4.99,sb:true},"hummus":{f:3.49,s:3.79,sb:false},"salsa verde":{f:2.99,s:3.29,sb:true},"enchilada sauce":{f:1.99,s:2.19,sb:true},"ginger":{f:0.99,s:1.19,sb:false},"green onions":{f:0.79,s:0.89,sb:false},"cilantro":{f:0.79,s:0.89,sb:false},"basil":{f:2.49,s:2.79,sb:false},"parsley":{f:0.99,s:1.09,sb:false},"frozen peas":{f:1.99,s:2.19,sb:true},"frozen corn":{f:1.79,s:1.99,sb:true},"heavy cream":{f:3.99,s:4.29,sb:true},"sour cream":{f:1.99,s:2.19,sb:true},"ranch dressing":{f:3.49,s:3.79,sb:true},"dijon mustard":{f:2.99,s:3.29,sb:false},"worcestershire":{f:2.99,s:3.29,sb:false},"canned green chiles":{f:1.29,s:1.49,sb:true},"kalamata olives":{f:3.49,s:3.79,sb:false},"sun-dried tomatoes":{f:3.99,s:4.29,sb:false},"pine nuts":{f:4.99,s:5.49,sb:false},"white beans":{f:0.89,s:0.99,sb:true},"rotel":{f:1.09,s:1.29,sb:true},"jalapeño":{f:0.39,s:0.49,sb:false},"cauliflower":{f:2.99,s:3.29,sb:false},"corn tortillas":{f:2.49,s:2.79,sb:true},"taco shells":{f:2.99,s:3.29,sb:true},"flatbread":{f:2.99,s:3.29,sb:false},"cheddar cheese":{f:3.49,s:3.79,sb:true},"pepper jack cheese":{f:3.49,s:3.79,sb:true},"ricotta":{f:3.99,s:4.29,sb:false},"taco seasoning":{f:1.49,s:1.69,sb:true},"smoked paprika":{f:2.29,s:2.49,sb:false},"frozen spinach":{f:1.99,s:2.19,sb:true},"apple cider vinegar":{f:2.49,s:2.79,sb:false},"peanut butter":{f:3.49,s:3.79,sb:true},"tahini":{f:4.99,s:5.49,sb:false},"balsamic vinegar":{f:3.49,s:3.79,sb:false},"milk":{f:3.49,s:3.79,sb:true},"naan":{f:3.49,s:3.79,sb:false},"pita bread":{f:2.99,s:3.29,sb:false}};
-function gp(item,frys,qty=1){const d=GP[item];if(!d)return 1.5*qty;if(frys)return d.f*qty;return(d.sb?d.s*0.9:d.s*0.95)*qty;}
+const gp=(item,frys,qty=1)=>{const d=GP[item];if(!d)return 1.5*qty;return frys?d.f*qty:(d.sb?d.s*.9:d.s*.95)*qty;};
 
 const ZONES=[
-  {z:"🌸 Floral & Seasonal",c:"#F8BBD9",o:1},{z:"🥦 Produce",c:"#C8E6C9",o:2},
-  {z:"🥖 Deli & Bakery",c:"#FFE0B2",o:3},{z:"🥩 Meat & Seafood",c:"#FFCDD2",o:4},
+  {z:"🌸 Floral",c:"#F8BBD9",o:1},{z:"🥦 Produce",c:"#C8E6C9",o:2},
+  {z:"🥖 Deli & Bakery",c:"#FFE0B2",o:3},{z:"🥩 Meat",c:"#FFCDD2",o:4},
   {z:"🍝 Pasta, Rice & Grains",c:"#FFF9C4",o:5},{z:"🌮 Mexican & International",c:"#FFE0CC",o:6},
-  {z:"🫙 Canned Goods & Broth",c:"#DCEDC8",o:7},{z:"🧂 Condiments, Oils & Sauces",c:"#E1BEE7",o:8},
+  {z:"🫙 Canned & Broth",c:"#DCEDC8",o:7},{z:"🧂 Condiments & Oils",c:"#E1BEE7",o:8},
   {z:"🥫 Beans & Lentils",c:"#B2EBF2",o:9},{z:"🍞 Bread & Baking",c:"#FFF3E0",o:10},
-  {z:"🧊 Frozen Foods",c:"#B3E5FC",o:11},{z:"🥛 Dairy & Eggs",c:"#E3F2FD",o:12},
+  {z:"🧊 Frozen",c:"#B3E5FC",o:11},{z:"🥛 Dairy & Eggs",c:"#E3F2FD",o:12},
   {z:"🛒 Other",c:"#ECEFF1",o:14}
 ];
-const IZ={"broccoli":2,"spinach":2,"kale":2,"bell peppers":2,"onion":2,"red onion":2,"garlic":2,"tomato":2,"cherry tomatoes":2,"cucumber":2,"zucchini":2,"mushrooms":2,"sweet potato":2,"russet potato":2,"avocado":2,"lime":2,"lemon":2,"celery":2,"carrots":2,"corn":2,"asparagus":2,"green beans":2,"cabbage":2,"bok choy":2,"jalapeño":2,"cauliflower":2,"green onions":2,"cilantro":2,"basil":2,"parsley":2,"ginger":2,"bread":3,"pita bread":3,"naan":3,"flatbread":3,"burger buns":3,"panko breadcrumbs":3,"chicken breast":4,"chicken thighs":4,"ground beef 90/10":4,"ground turkey":4,"ground pork":4,"pork tenderloin":4,"pork chops":4,"beef sirloin":4,"beef stew meat":4,"flank steak":4,"lamb chops":4,"Italian sausage":4,"chorizo":4,"bacon":4,"pasta":5,"egg noodles":5,"rice":5,"quinoa":5,"tortillas":6,"corn tortillas":6,"taco shells":6,"enchilada sauce":6,"salsa verde":6,"canned green chiles":6,"taco seasoning":6,"rotel":6,"oyster sauce":6,"sesame oil":6,"soy sauce":6,"coconut milk":6,"canned tomatoes":7,"tomato paste":7,"chicken broth":7,"beef broth":7,"salsa":7,"olive oil":8,"hot sauce":8,"sriracha":8,"worcestershire":8,"dijon mustard":8,"ranch dressing":8,"hummus":8,"balsamic vinegar":8,"apple cider vinegar":8,"tahini":8,"peanut butter":8,"kalamata olives":8,"sun-dried tomatoes":8,"pine nuts":8,"black beans":9,"kidney beans":9,"pinto beans":9,"chickpeas":9,"lentils":9,"white beans":9,"smoked paprika":10,"frozen peas":11,"frozen corn":11,"frozen spinach":11,"edamame":11,"eggs":12,"milk":12,"butter":12,"heavy cream":12,"sour cream":12,"cream cheese":12,"greek yogurt":12,"cottage cheese":12,"shredded cheese":12,"parmesan":12,"feta cheese":12,"mozzarella":12,"cheddar cheese":12,"pepper jack cheese":12,"ricotta":12};
+const IZ={"broccoli":2,"spinach":2,"kale":2,"bell peppers":2,"onion":2,"red onion":2,"garlic":2,"tomato":2,"cherry tomatoes":2,"cucumber":2,"zucchini":2,"mushrooms":2,"sweet potato":2,"russet potato":2,"avocado":2,"lime":2,"lemon":2,"celery":2,"carrots":2,"corn":2,"asparagus":2,"green beans":2,"cabbage":2,"bok choy":2,"jalapeño":2,"cauliflower":2,"green onions":2,"cilantro":2,"basil":2,"parsley":2,"ginger":2,"red onion":2,"bread":3,"pita bread":3,"naan":3,"flatbread":3,"burger buns":3,"panko breadcrumbs":3,"chicken breast":4,"chicken thighs":4,"ground beef 90/10":4,"ground turkey":4,"ground pork":4,"pork tenderloin":4,"pork chops":4,"beef sirloin":4,"beef stew meat":4,"flank steak":4,"lamb chops":4,"Italian sausage":4,"chorizo":4,"bacon":4,"pasta":5,"egg noodles":5,"rice":5,"quinoa":5,"tortillas":6,"corn tortillas":6,"taco shells":6,"enchilada sauce":6,"salsa verde":6,"canned green chiles":6,"taco seasoning":6,"rotel":6,"oyster sauce":6,"sesame oil":6,"soy sauce":6,"coconut milk":6,"canned tomatoes":7,"tomato paste":7,"chicken broth":7,"beef broth":7,"salsa":7,"olive oil":8,"hot sauce":8,"sriracha":8,"worcestershire":8,"dijon mustard":8,"ranch dressing":8,"hummus":8,"balsamic vinegar":8,"apple cider vinegar":8,"tahini":8,"peanut butter":8,"kalamata olives":8,"sun-dried tomatoes":8,"pine nuts":8,"black beans":9,"kidney beans":9,"pinto beans":9,"chickpeas":9,"lentils":9,"white beans":9,"smoked paprika":10,"frozen peas":11,"frozen corn":11,"frozen spinach":11,"edamame":11,"eggs":12,"milk":12,"butter":12,"heavy cream":12,"sour cream":12,"cream cheese":12,"greek yogurt":12,"cottage cheese":12,"shredded cheese":12,"parmesan":12,"feta cheese":12,"mozzarella":12,"cheddar cheese":12,"pepper jack cheese":12,"ricotta":12};
 const gz=item=>IZ[item]||14;
 
-// Human-readable quantity formatter
-const UNIT_MAP={
-  // Produce — count or bunch
-  "garlic":"clove","lemon":"","lime":"","onion":"","red onion":"","avocado":"",
-  "tomato":"","bell peppers":"","jalapeño":"","corn":"ear","cucumber":"",
-  "zucchini":"","cauliflower":"head","cabbage":"head","bok choy":"head",
-  // Produce — weight
-  "broccoli":"lb","spinach":"oz","kale":"oz","carrots":"lb","celery":"stalk",
-  "sweet potato":"lb","russet potato":"lb","asparagus":"lb","green beans":"lb",
-  "mushrooms":"oz","cherry tomatoes":"oz","green onions":"bunch","cilantro":"bunch",
-  "basil":"oz","parsley":"bunch","ginger":"inch",
-  // Meat — lb
-  "chicken breast":"lb","chicken thighs":"lb","ground beef 90/10":"lb",
-  "ground turkey":"lb","ground pork":"lb","pork tenderloin":"lb","pork chops":"lb",
-  "beef sirloin":"lb","beef stew meat":"lb","flank steak":"lb","lamb chops":"lb",
-  "Italian sausage":"lb","chorizo":"lb","bacon":"lb",
-  // Dairy
-  "eggs":"","butter":"tbsp","heavy cream":"cup","sour cream":"cup",
-  "cream cheese":"oz","greek yogurt":"cup","shredded cheese":"cup",
-  "parmesan":"cup","feta cheese":"oz","mozzarella":"oz","cheddar cheese":"cup",
-  "pepper jack cheese":"cup","ricotta":"cup","milk":"cup","cottage cheese":"cup",
-  // Pantry — cup
-  "rice":"cup","quinoa":"cup","pasta":"lb","egg noodles":"oz","lentils":"cup",
-  "black beans":"can","kidney beans":"can","pinto beans":"can","chickpeas":"can",
-  "white beans":"can","canned tomatoes":"can","chicken broth":"cup","beef broth":"cup",
-  "coconut milk":"can","tomato paste":"oz","salsa":"cup","salsa verde":"cup",
-  "enchilada sauce":"cup","canned green chiles":"can","rotel":"can",
-  // Pantry — tbsp/tsp
-  "olive oil":"tbsp","sesame oil":"tbsp","soy sauce":"tbsp","oyster sauce":"tbsp",
-  "hot sauce":"tbsp","sriracha":"tbsp","worcestershire":"tbsp","ranch dressing":"tbsp",
-  "dijon mustard":"tbsp","balsamic vinegar":"tbsp","apple cider vinegar":"tbsp",
-  "peanut butter":"tbsp","tahini":"tbsp","hummus":"cup",
-  // Misc
-  "tortillas":"","corn tortillas":"","taco shells":"","burger buns":"",
-  "bread":"slice","panko breadcrumbs":"cup","taco seasoning":"oz",
-  "smoked paprika":"tsp","frozen peas":"cup","frozen corn":"cup",
-  "frozen spinach":"oz","edamame":"cup","sun-dried tomatoes":"oz",
-  "kalamata olives":"oz","pine nuts":"oz","naan":"","pita bread":"",
-  "flatbread":"","tofu extra firm":"oz",
-};
-
-// Scale multipliers per unit type to give realistic amounts
-const UNIT_SCALE={
-  "lb":1,"oz":16,"cup":4,"tbsp":16,"tsp":48,"clove":8,
-  "can":1,"bunch":1,"stalk":4,"ear":1,"inch":3,"head":1,"slice":4,""  :1
-};
-
-function fmtQty(item,rawQty){
-  const unit=UNIT_MAP[item];
-  if(unit===undefined){
-    // fallback: just show number
-    return rawQty%1===0?rawQty+"":rawQty.toFixed(1)+"";
-  }
-  const scale=UNIT_SCALE[unit]||1;
-  const scaled=rawQty*scale;
-  // Round to sensible numbers
-  const nice=scaled<1?Math.round(scaled*4)/4:scaled<=4?Math.round(scaled*2)/2:Math.round(scaled);
-  const qty=nice%1===0?nice:nice.toFixed(nice<2?2:1);
-  if(unit==="")return qty+" ";
-  // pluralize simple units
-  const pl=nice!==1&&["oz","lb","cup","clove","stalk","ear","inch","slice"].includes(unit)?unit+"s":unit;
-  return qty+" "+pl+" ";
+// Human-readable quantities
+const UM={"garlic":"clove","lemon":"","lime":"","onion":"","red onion":"","avocado":"","tomato":"","bell peppers":"","jalapeño":"","corn":"ear","cucumber":"","zucchini":"","cauliflower":"head","cabbage":"head","bok choy":"head","broccoli":"lb","spinach":"oz","kale":"oz","carrots":"lb","celery":"stalk","sweet potato":"lb","russet potato":"lb","asparagus":"lb","green beans":"lb","mushrooms":"oz","cherry tomatoes":"oz","green onions":"bunch","cilantro":"bunch","basil":"oz","parsley":"bunch","ginger":"inch","chicken breast":"lb","chicken thighs":"lb","ground beef 90/10":"lb","ground turkey":"lb","ground pork":"lb","pork tenderloin":"lb","pork chops":"lb","beef sirloin":"lb","beef stew meat":"lb","flank steak":"lb","lamb chops":"lb","Italian sausage":"lb","chorizo":"lb","bacon":"lb","eggs":"","butter":"tbsp","heavy cream":"cup","sour cream":"cup","cream cheese":"oz","greek yogurt":"cup","shredded cheese":"cup","parmesan":"cup","feta cheese":"oz","mozzarella":"oz","cheddar cheese":"cup","pepper jack cheese":"cup","ricotta":"cup","milk":"cup","rice":"cup","quinoa":"cup","pasta":"lb","egg noodles":"oz","lentils":"cup","black beans":"can","kidney beans":"can","pinto beans":"can","chickpeas":"can","white beans":"can","canned tomatoes":"can","chicken broth":"cup","beef broth":"cup","coconut milk":"can","tomato paste":"oz","salsa":"cup","salsa verde":"cup","enchilada sauce":"cup","canned green chiles":"can","rotel":"can","olive oil":"tbsp","sesame oil":"tbsp","soy sauce":"tbsp","oyster sauce":"tbsp","hot sauce":"tbsp","sriracha":"tbsp","worcestershire":"tbsp","ranch dressing":"tbsp","dijon mustard":"tbsp","balsamic vinegar":"tbsp","apple cider vinegar":"tbsp","peanut butter":"tbsp","tahini":"tbsp","hummus":"cup","tortillas":"","corn tortillas":"","taco shells":"","burger buns":"","bread":"slice","panko breadcrumbs":"cup","taco seasoning":"oz","smoked paprika":"tsp","frozen peas":"cup","frozen corn":"cup","frozen spinach":"oz","edamame":"cup","sun-dried tomatoes":"oz","kalamata olives":"oz","pine nuts":"oz","naan":"","pita bread":"","flatbread":"","tofu extra firm":"oz"};
+const US={"lb":1,"oz":16,"cup":4,"tbsp":16,"tsp":48,"clove":8,"can":1,"bunch":1,"stalk":4,"ear":1,"inch":3,"head":1,"slice":4,"":1};
+function fq(item,raw){
+  const unit=UM[item];if(unit===undefined)return raw%1===0?`${raw} `:`${raw.toFixed(1)} `;
+  const sc=US[unit]||1,scaled=raw*sc;
+  const n=scaled<1?Math.round(scaled*4)/4:scaled<=4?Math.round(scaled*2)/2:Math.round(scaled);
+  const q=n%1===0?n:n.toFixed(n<2?2:1);
+  if(unit==="")return `${q} `;
+  const pl=n!==1&&["oz","lb","cup","clove","stalk","ear","inch","slice"].includes(unit)?unit+"s":unit;
+  return `${q} ${pl} `;
 }
-  {id:"c01",name:"Sheet Pan Lemon Herb Chicken & Broccoli",time:25,protein:48,cal:420,carbs:12,fat:14,cat:"Chicken",tags:["low-carb","one-pan","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["broccoli",1.5],["olive oil",0.15],["garlic",1],["lemon",2]],steps:"Toss chicken & broccoli in olive oil, garlic, salt, pepper, lemon zest. Roast 425°F for 22 min."},
-  {id:"c02",name:"Chicken Tikka Masala",time:30,protein:44,cal:520,carbs:38,fat:18,cat:"Chicken",tags:["indian","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["canned tomatoes",1],["coconut milk",1],["onion",1],["garlic",1],["ginger",1],["rice",0.4]],steps:"Marinate chicken in yogurt & spices. Sear 5 min. Make sauce with onion, garlic, ginger, tomatoes, coconut milk. Simmer 15 min. Serve over rice."},
-  {id:"c03",name:"Chicken Fajita Bowls",time:20,protein:43,cal:490,carbs:42,fat:15,cat:"Chicken",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["bell peppers",3],["onion",1],["rice",0.4],["shredded cheese",1],["avocado",1],["lime",2]],steps:"Season chicken with cumin, chili, garlic. Cook with peppers & onions. Serve over rice with cheese & avocado."},
-  {id:"c04",name:"Greek Chicken Power Bowls",time:25,protein:52,cal:510,carbs:36,fat:16,cat:"Chicken",tags:["mediterranean","meal-prep","family-friendly"],ing:[["chicken breast",1.5],["quinoa",0.75],["cucumber",1],["cherry tomatoes",1],["feta cheese",1],["hummus",1],["lemon",2]],steps:"Grill chicken with oregano & lemon. Cook quinoa. Assemble bowls with veggies, feta, hummus."},
-  {id:"c05",name:"Chicken & Lentil Soup",time:30,protein:41,cal:390,carbs:34,fat:9,cat:"Chicken",tags:["soup","meal-prep","family-friendly","toddler-friendly"],ing:[["chicken breast",1.25],["lentils",0.75],["chicken broth",1],["canned tomatoes",1],["spinach",1],["onion",1],["carrots",2],["garlic",1]],steps:"Sauté onion, carrot, garlic. Add broth, lentils, tomatoes, diced chicken. Simmer 25 min. Stir in spinach."},
-  {id:"c06",name:"Marry Me Chicken",time:30,protein:44,cal:580,carbs:36,fat:24,cat:"Chicken",tags:["italian","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["heavy cream",0.5],["sun-dried tomatoes",1],["chicken broth",0.5],["parmesan",1],["garlic",1],["basil",1],["pasta",1]],steps:"Sear chicken. Make sauce with garlic, cream, broth, sun-dried tomatoes, parmesan. Simmer 15 min. Serve over pasta."},
-  {id:"c07",name:"Chicken Enchiladas Verde",time:30,protein:42,cal:500,carbs:40,fat:17,cat:"Chicken",tags:["mexican","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["tortillas",1],["salsa verde",1],["shredded cheese",1],["sour cream",0.5],["canned green chiles",1],["onion",1]],steps:"Shred cooked chicken. Mix with green chiles & onion. Roll into tortillas, top with salsa verde & cheese. Bake 375°F 20 min."},
-  {id:"c08",name:"Honey Garlic Chicken Thighs & Green Beans",time:25,protein:40,cal:410,carbs:14,fat:16,cat:"Chicken",tags:["low-carb","one-pan","fast","family-friendly","toddler-friendly"],ing:[["chicken thighs",2],["green beans",1],["garlic",1],["soy sauce",0.2],["olive oil",0.1]],steps:"Sear chicken thighs skin-down 6 min. Flip, add green beans, drizzle honey-garlic-soy sauce. Roast 400°F 18 min."},
-  {id:"c09",name:"White Chicken Chili",time:30,protein:44,cal:460,carbs:32,fat:16,cat:"Chicken",tags:["comfort","meal-prep","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["pinto beans",2],["chicken broth",1],["canned green chiles",2],["onion",1],["garlic",1],["cream cheese",1],["shredded cheese",0.5]],steps:"Simmer chicken in broth with onion, garlic, chiles, cumin. Shred chicken. Stir in beans, cream cheese."},
-  {id:"c10",name:"One-Pan Chicken & Rice",time:30,protein:44,cal:490,carbs:44,fat:14,cat:"Chicken",tags:["one-pan","comfort","family-friendly","toddler-friendly"],ing:[["chicken thighs",2],["rice",0.5],["chicken broth",1],["onion",1],["garlic",1],["bell peppers",2],["smoked paprika",0.1]],steps:"Brown chicken thighs. Remove. Sauté onion, peppers, garlic. Add rice & broth, nestle chicken on top. Cover and cook 20 min."},
-  {id:"b01",name:"Ground Beef & Zucchini Skillet",time:20,protein:42,cal:410,carbs:14,fat:22,cat:"Beef",tags:["low-carb","fast","family-friendly","toddler-friendly"],ing:[["ground beef 90/10",1.25],["zucchini",2],["canned tomatoes",1],["garlic",1],["onion",1],["shredded cheese",0.5]],steps:"Brown beef with onion & garlic. Add zucchini & tomatoes. Simmer 10 min. Top with cheese."},
-  {id:"b02",name:"Beef & Broccoli Stir-Fry",time:20,protein:45,cal:450,carbs:28,fat:18,cat:"Beef",tags:["asian","fast","family-friendly","toddler-friendly"],ing:[["beef sirloin",1.25],["broccoli",1],["soy sauce",0.3],["sesame oil",0.1],["garlic",1],["ginger",1],["rice",0.4]],steps:"Slice beef thin. Sear on max heat 2 min. Add broccoli, garlic, ginger. Toss with soy & sesame. Serve over rice."},
-  {id:"b03",name:"Turkey Taco Bowls",time:20,protein:44,cal:470,carbs:38,fat:14,cat:"Beef",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["ground turkey",1.5],["rice",0.4],["black beans",1],["salsa",0.5],["shredded cheese",1],["avocado",1]],steps:"Brown turkey with taco seasoning. Cook rice. Assemble bowls with beans, salsa, cheese, avocado."},
-  {id:"b04",name:"Beef Chili",time:30,protein:43,cal:450,carbs:34,fat:18,cat:"Beef",tags:["comfort","meal-prep","family-friendly","toddler-friendly"],ing:[["ground beef 90/10",1.5],["kidney beans",2],["canned tomatoes",2],["onion",1],["bell peppers",2],["garlic",1],["tomato paste",1]],steps:"Brown beef with onion, pepper, garlic. Add beans, tomatoes, paste, chili powder, cumin. Simmer 25 min."},
-  {id:"b05",name:"Smash Burger Bowls",time:20,protein:44,cal:460,carbs:8,fat:26,cat:"Beef",tags:["comfort","fast","low-carb","family-friendly","toddler-friendly"],ing:[["ground beef 90/10",1.25],["shredded cheese",1],["onion",1],["tomato",2],["cucumber",1],["sour cream",0.5]],steps:"Form thin patties, smash on cast iron. Cook 2 min/side. Top with cheese. Serve as burger bowl with toppings."},
-  {id:"b06",name:"Beef Stew",time:30,protein:38,cal:420,carbs:30,fat:14,cat:"Beef",tags:["comfort","meal-prep","soup","toddler-friendly"],ing:[["beef stew meat",1.5],["russet potato",3],["carrots",3],["onion",1],["beef broth",1],["tomato paste",1],["garlic",1],["celery",3]],steps:"Sear beef. Add onion, carrot, celery, garlic, potato. Pour broth & tomato paste. Simmer 25 min until tender."},
-  {id:"b07",name:"Carne Asada Bowls",time:25,protein:48,cal:490,carbs:36,fat:16,cat:"Beef",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["flank steak",1.5],["rice",0.4],["black beans",1],["avocado",2],["salsa",0.5],["lime",3],["cilantro",1],["red onion",0.5]],steps:"Marinate steak in lime, garlic, cumin, cilantro 10 min. Grill or sear 4 min/side. Rest, slice thin. Assemble bowls."},
-  {id:"b08",name:"Beef Tacos",time:20,protein:42,cal:460,carbs:34,fat:20,cat:"Beef",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["ground beef 90/10",1.5],["taco shells",1],["shredded cheese",1],["tomato",2],["avocado",1],["sour cream",0.5],["taco seasoning",1]],steps:"Brown beef with taco seasoning. Warm shells. Build tacos with beef, cheese, tomato, avocado, sour cream."},
-  {id:"p01",name:"Pork Tenderloin & Sweet Potato Mash",time:30,protein:46,cal:470,carbs:30,fat:14,cat:"Pork",tags:["comfort","family-friendly","toddler-friendly"],ing:[["pork tenderloin",1.5],["sweet potato",2],["spinach",1],["olive oil",0.1],["garlic",1]],steps:"Season pork, sear 3 min/side, roast 400°F 18 min. Boil & mash sweet potatoes. Wilt spinach in pan drippings."},
-  {id:"p02",name:"Carnitas Bowls",time:30,protein:44,cal:490,carbs:38,fat:16,cat:"Pork",tags:["mexican","meal-prep","family-friendly","toddler-friendly"],ing:[["pork tenderloin",1.5],["rice",0.4],["black beans",1],["salsa",0.5],["avocado",1],["lime",2],["cilantro",1],["onion",1]],steps:"Slice pork, season with cumin, oregano, lime. Sear then braise 20 min. Crisp under broiler. Serve over rice with beans & salsa."},
-  {id:"p03",name:"Italian Sausage & Peppers Pasta",time:25,protein:40,cal:530,carbs:46,fat:20,cat:"Pork",tags:["italian","comfort","family-friendly","toddler-friendly"],ing:[["Italian sausage",1.25],["bell peppers",3],["onion",1],["canned tomatoes",1],["pasta",1],["garlic",1],["parmesan",1]],steps:"Brown sliced sausage. Cook peppers & onions. Add tomatoes & garlic, simmer 10 min. Toss with cooked pasta & parmesan."},
-  {id:"p04",name:"Egg Roll in a Bowl",time:20,protein:34,cal:380,carbs:14,fat:20,cat:"Pork",tags:["asian","low-carb","fast","family-friendly","toddler-friendly"],ing:[["ground pork",1.25],["eggs",4],["cabbage",1],["carrots",2],["soy sauce",0.3],["sesame oil",0.1],["garlic",1],["ginger",1],["green onions",1]],steps:"Brown pork. Push to side, scramble eggs. Add garlic, ginger, shredded cabbage & carrots. Toss with soy & sesame."},
-  {id:"t01",name:"Turkey Stuffed Zucchini Boats",time:30,protein:38,cal:390,carbs:14,fat:16,cat:"Turkey",tags:["low-carb","family-friendly","toddler-friendly"],ing:[["ground turkey",1.25],["zucchini",4],["canned tomatoes",1],["shredded cheese",1],["onion",1],["garlic",1]],steps:"Halve & hollow zucchini. Brown turkey with onion, garlic, tomatoes. Fill boats, top with cheese. Bake 375°F 20 min."},
-  {id:"t02",name:"Turkey Bolognese",time:30,protein:42,cal:500,carbs:42,fat:14,cat:"Turkey",tags:["italian","meal-prep","family-friendly","toddler-friendly"],ing:[["ground turkey",1.5],["pasta",1],["canned tomatoes",2],["tomato paste",1],["onion",1],["carrots",1],["celery",2],["garlic",1],["parmesan",1]],steps:"Sauté veggies. Add turkey, brown well. Add tomatoes & paste, simmer 20 min. Toss with pasta & parmesan."},
-  {id:"t03",name:"Turkey Taco Skillet",time:20,protein:40,cal:440,carbs:32,fat:14,cat:"Turkey",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["ground turkey",1.5],["black beans",1],["corn",2],["canned tomatoes",1],["onion",1],["garlic",1],["shredded cheese",1],["taco seasoning",1]],steps:"Brown turkey with onion, garlic, taco seasoning. Add beans, corn, tomatoes. Simmer 8 min. Top with cheese."},
-  {id:"e01",name:"Egg & Veggie Frittata",time:25,protein:35,cal:340,carbs:10,fat:20,cat:"Eggs & Veggie",tags:["vegetarian","low-carb","meal-prep","toddler-friendly"],ing:[["eggs",1.5],["spinach",1],["mushrooms",1],["bell peppers",2],["feta cheese",1],["olive oil",0.1]],steps:"Sauté veggies in oven-safe skillet. Pour in whisked eggs. Top with feta. Bake 375°F 15 min until set."},
-  {id:"e02",name:"Chickpea & Spinach Curry",time:25,protein:22,cal:420,carbs:52,fat:12,cat:"Eggs & Veggie",tags:["vegetarian","indian","family-friendly","toddler-friendly"],ing:[["chickpeas",2],["spinach",1],["canned tomatoes",1],["onion",1],["garlic",1],["ginger",1],["coconut milk",1],["rice",0.4]],steps:"Sauté onion, garlic, ginger with curry powder. Add tomatoes, chickpeas, coconut milk. Simmer 15 min. Stir in spinach."},
-  {id:"e03",name:"Black Bean Quesadillas",time:15,protein:28,cal:430,carbs:46,fat:16,cat:"Eggs & Veggie",tags:["vegetarian","mexican","fast","family-friendly","toddler-friendly"],ing:[["black beans",2],["tortillas",1],["shredded cheese",1.5],["bell peppers",2],["onion",1],["salsa",1],["avocado",1]],steps:"Sauté pepper & onion. Fill tortillas with beans, veggies, cheese. Cook 3 min/side. Serve with salsa & avocado."},
-  {id:"pa01",name:"Creamy Tuscan Pasta",time:25,protein:38,cal:570,carbs:44,fat:22,cat:"Pasta",tags:["italian","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.25],["pasta",1],["spinach",1],["sun-dried tomatoes",1],["heavy cream",0.5],["parmesan",1],["garlic",1],["chicken broth",0.5]],steps:"Sear chicken. Set aside. Cook garlic, sun-dried tomatoes, cream, broth, parmesan into sauce. Add pasta, spinach, sliced chicken. Toss."},
-  {id:"pa02",name:"Baked Ziti",time:30,protein:40,cal:560,carbs:48,fat:22,cat:"Pasta",tags:["italian","comfort","meal-prep","family-friendly","toddler-friendly"],ing:[["ground beef 90/10",1],["pasta",1],["canned tomatoes",2],["mozzarella",1],["parmesan",1],["tomato paste",1],["garlic",1],["onion",1]],steps:"Brown beef with onion & garlic. Add tomatoes & paste, simmer. Toss with pasta. Layer with cheese. Bake 375°F 20 min."},
-  {id:"pa03",name:"Chicken Alfredo",time:25,protein:48,cal:600,carbs:44,fat:26,cat:"Pasta",tags:["italian","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["pasta",1],["heavy cream",0.75],["parmesan",1],["butter",0.2],["garlic",1],["parsley",1]],steps:"Sear chicken. Make Alfredo: melt butter, add garlic, pour cream, whisk in parmesan. Toss with pasta & sliced chicken."},
-  {id:"bw01",name:"Burrito Bowl Bar",time:20,protein:42,cal:500,carbs:48,fat:14,cat:"Bowl",tags:["mexican","meal-prep","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["rice",0.4],["black beans",1],["corn",2],["shredded cheese",1],["salsa",1],["avocado",2],["sour cream",0.5],["lime",2]],steps:"Cook seasoned chicken. Cook rice with lime. Warm beans & corn. Set up build-your-own bowls."},
-  {id:"bw02",name:"Garlic Butter Steak Bites & Asparagus",time:20,protein:46,cal:430,carbs:8,fat:22,cat:"Bowl",tags:["low-carb","fast","comfort","family-friendly","toddler-friendly"],ing:[["beef sirloin",1.5],["asparagus",1.5],["butter",0.2],["garlic",1],["lemon",1],["parsley",1]],steps:"Cube steak, season well. Sear in butter 2 min/side. Cook asparagus with garlic & butter 4 min. Combine, squeeze lemon."},
-  {id:"bw03",name:"Chipotle-Style Steak Bowls",time:25,protein:48,cal:510,carbs:40,fat:18,cat:"Bowl",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["flank steak",1.5],["rice",0.4],["black beans",1],["corn",2],["avocado",1],["salsa",0.5],["lime",2],["sour cream",0.5],["shredded cheese",0.5]],steps:"Season steak with chipotle, cumin, garlic. Grill or sear 4 min/side. Rest & slice. Serve over rice with all toppings."}
-];
 
+const DAYS=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+const MEALS=[
+  {id:"c01",name:"Sheet Pan Lemon Herb Chicken & Broccoli",time:25,protein:48,cal:420,carbs:12,fat:14,cat:"Chicken",tags:["low-carb","one-pan","toddler-friendly"],ing:[["chicken breast",1.5],["broccoli",1.5],["olive oil",0.15],["garlic",1],["lemon",2]],steps:"Toss chicken & broccoli in olive oil, garlic, salt, pepper, lemon zest. Roast 425°F for 22 min."},
+  {id:"c02",name:"Chicken Tikka Masala",time:30,protein:44,cal:520,carbs:38,fat:18,cat:"Chicken",tags:["indian","comfort","toddler-friendly"],ing:[["chicken breast",1.5],["canned tomatoes",1],["coconut milk",1],["onion",1],["garlic",1],["ginger",1],["rice",0.4]],steps:"Marinate chicken in yogurt & spices. Sear 5 min. Make sauce with onion, garlic, ginger, tomatoes, coconut milk. Simmer 15 min. Serve over rice."},
+  {id:"c03",name:"Chicken Fajita Bowls",time:20,protein:43,cal:490,carbs:42,fat:15,cat:"Chicken",tags:["mexican","fast","toddler-friendly"],ing:[["chicken breast",1.5],["bell peppers",3],["onion",1],["rice",0.4],["shredded cheese",1],["avocado",1],["lime",2]],steps:"Season chicken with cumin, chili, garlic. Cook with peppers & onions. Serve over rice with cheese & avocado."},
+  {id:"c04",name:"Greek Chicken Power Bowls",time:25,protein:52,cal:510,carbs:36,fat:16,cat:"Chicken",tags:["mediterranean","meal-prep"],ing:[["chicken breast",1.5],["quinoa",0.75],["cucumber",1],["cherry tomatoes",1],["feta cheese",1],["hummus",1],["lemon",2]],steps:"Grill chicken with oregano & lemon. Cook quinoa. Assemble bowls with veggies, feta, hummus."},
+  {id:"c05",name:"Chicken & Lentil Soup",time:30,protein:41,cal:390,carbs:34,fat:9,cat:"Chicken",tags:["soup","meal-prep","toddler-friendly"],ing:[["chicken breast",1.25],["lentils",0.75],["chicken broth",1],["canned tomatoes",1],["spinach",1],["onion",1],["carrots",2],["garlic",1]],steps:"Sauté onion, carrot, garlic. Add broth, lentils, tomatoes, diced chicken. Simmer 25 min. Stir in spinach."},
+  {id:"c06",name:"Marry Me Chicken",time:30,protein:44,cal:580,carbs:36,fat:24,cat:"Chicken",tags:["italian","comfort","toddler-friendly"],ing:[["chicken breast",1.5],["heavy cream",0.5],["sun-dried tomatoes",1],["chicken broth",0.5],["parmesan",1],["garlic",1],["basil",1],["pasta",1]],steps:"Sear chicken. Make sauce with garlic, cream, broth, sun-dried tomatoes, parmesan. Simmer 15 min. Serve over pasta."},
+  {id:"c07",name:"Chicken Enchiladas Verde",time:30,protein:42,cal:500,carbs:40,fat:17,cat:"Chicken",tags:["mexican","comfort","toddler-friendly"],ing:[["chicken breast",1.5],["tortillas",1],["salsa verde",1],["shredded cheese",1],["sour cream",0.5],["canned green chiles",1],["onion",1]],steps:"Shred cooked chicken. Mix with green chiles & onion. Roll into tortillas, top with salsa verde & cheese. Bake 375°F 20 min."},
+  {id:"c08",name:"Honey Garlic Chicken Thighs & Green Beans",time:25,protein:40,cal:410,carbs:14,fat:16,cat:"Chicken",tags:["low-carb","one-pan","fast","toddler-friendly"],ing:[["chicken thighs",2],["green beans",1],["garlic",1],["soy sauce",0.2],["olive oil",0.1]],steps:"Sear chicken thighs skin-down 6 min. Flip, add green beans, drizzle honey-garlic-soy. Roast 400°F 18 min."},
+  {id:"c09",name:"White Chicken Chili",time:30,protein:44,cal:460,carbs:32,fat:16,cat:"Chicken",tags:["comfort","meal-prep","toddler-friendly"],ing:[["chicken breast",1.5],["pinto beans",2],["chicken broth",1],["canned green chiles",2],["onion",1],["garlic",1],["cream cheese",1],["shredded cheese",0.5]],steps:"Simmer chicken in broth with onion, garlic, chiles, cumin. Shred chicken. Stir in beans, cream cheese."},
+  {id:"c10",name:"One-Pan Chicken & Rice",time:30,protein:44,cal:490,carbs:44,fat:14,cat:"Chicken",tags:["one-pan","comfort","toddler-friendly"],ing:[["chicken thighs",2],["rice",0.5],["chicken broth",1],["onion",1],["garlic",1],["bell peppers",2],["smoked paprika",0.1]],steps:"Brown chicken thighs. Remove. Sauté onion, peppers, garlic. Add rice & broth, nestle chicken on top. Cover and cook 20 min."},
+  {id:"b01",name:"Ground Beef & Zucchini Skillet",time:20,protein:42,cal:410,carbs:14,fat:22,cat:"Beef",tags:["low-carb","fast","toddler-friendly"],ing:[["ground beef 90/10",1.25],["zucchini",2],["canned tomatoes",1],["garlic",1],["onion",1],["shredded cheese",0.5]],steps:"Brown beef with onion & garlic. Add zucchini & tomatoes. Simmer 10 min. Top with cheese."},
+  {id:"b02",name:"Beef & Broccoli Stir-Fry",time:20,protein:45,cal:450,carbs:28,fat:18,cat:"Beef",tags:["asian","fast","toddler-friendly"],ing:[["beef sirloin",1.25],["broccoli",1],["soy sauce",0.3],["sesame oil",0.1],["garlic",1],["ginger",1],["rice",0.4]],steps:"Slice beef thin. Sear on max heat 2 min. Add broccoli, garlic, ginger. Toss with soy & sesame. Serve over rice."},
+  {id:"b03",name:"Turkey Taco Bowls",time:20,protein:44,cal:470,carbs:38,fat:14,cat:"Beef",tags:["mexican","fast","toddler-friendly"],ing:[["ground turkey",1.5],["rice",0.4],["black beans",1],["salsa",0.5],["shredded cheese",1],["avocado",1]],steps:"Brown turkey with taco seasoning. Cook rice. Assemble bowls with beans, salsa, cheese, avocado."},
+  {id:"b04",name:"Beef Chili",time:30,protein:43,cal:450,carbs:34,fat:18,cat:"Beef",tags:["comfort","meal-prep","toddler-friendly"],ing:[["ground beef 90/10",1.5],["kidney beans",2],["canned tomatoes",2],["onion",1],["bell peppers",2],["garlic",1],["tomato paste",1]],steps:"Brown beef with onion, pepper, garlic. Add beans, tomatoes, paste, chili powder, cumin. Simmer 25 min."},
+  {id:"b05",name:"Smash Burger Bowls",time:20,protein:44,cal:460,carbs:8,fat:26,cat:"Beef",tags:["comfort","fast","low-carb","toddler-friendly"],ing:[["ground beef 90/10",1.25],["shredded cheese",1],["onion",1],["tomato",2],["cucumber",1],["sour cream",0.5]],steps:"Form thin patties, smash on cast iron. Cook 2 min/side. Top with cheese. Serve as burger bowl."},
+  {id:"b06",name:"Beef Stew",time:30,protein:38,cal:420,carbs:30,fat:14,cat:"Beef",tags:["comfort","meal-prep","soup","toddler-friendly"],ing:[["beef stew meat",1.5],["russet potato",3],["carrots",3],["onion",1],["beef broth",1],["tomato paste",1],["garlic",1],["celery",3]],steps:"Sear beef. Add onion, carrot, celery, garlic, potato. Pour broth & tomato paste. Simmer 25 min."},
+  {id:"b07",name:"Carne Asada Bowls",time:25,protein:48,cal:490,carbs:36,fat:16,cat:"Beef",tags:["mexican","fast","toddler-friendly"],ing:[["flank steak",1.5],["rice",0.4],["black beans",1],["avocado",2],["salsa",0.5],["lime",3],["cilantro",1],["red onion",0.5]],steps:"Marinate steak in lime, garlic, cumin, cilantro 10 min. Grill or sear 4 min/side. Rest, slice thin. Assemble bowls."},
+  {id:"b08",name:"Beef Tacos",time:20,protein:42,cal:460,carbs:34,fat:20,cat:"Beef",tags:["mexican","fast","toddler-friendly"],ing:[["ground beef 90/10",1.5],["taco shells",1],["shredded cheese",1],["tomato",2],["avocado",1],["sour cream",0.5],["taco seasoning",1]],steps:"Brown beef with taco seasoning. Warm shells. Build tacos."},
+  {id:"p01",name:"Pork Tenderloin & Sweet Potato Mash",time:30,protein:46,cal:470,carbs:30,fat:14,cat:"Pork",tags:["comfort","toddler-friendly"],ing:[["pork tenderloin",1.5],["sweet potato",2],["spinach",1],["olive oil",0.1],["garlic",1]],steps:"Season pork, sear 3 min/side, roast 400°F 18 min. Boil & mash sweet potatoes. Wilt spinach."},
+  {id:"p02",name:"Carnitas Bowls",time:30,protein:44,cal:490,carbs:38,fat:16,cat:"Pork",tags:["mexican","meal-prep","toddler-friendly"],ing:[["pork tenderloin",1.5],["rice",0.4],["black beans",1],["salsa",0.5],["avocado",1],["lime",2],["cilantro",1],["onion",1]],steps:"Slice pork, season with cumin, oregano, lime. Sear then braise 20 min. Crisp under broiler. Serve over rice."},
+  {id:"p03",name:"Italian Sausage & Peppers Pasta",time:25,protein:40,cal:530,carbs:46,fat:20,cat:"Pork",tags:["italian","comfort","toddler-friendly"],ing:[["Italian sausage",1.25],["bell peppers",3],["onion",1],["canned tomatoes",1],["pasta",1],["garlic",1],["parmesan",1]],steps:"Brown sliced sausage. Cook peppers & onions. Add tomatoes & garlic, simmer 10 min. Toss with pasta & parmesan."},
+  {id:"p04",name:"Egg Roll in a Bowl",time:20,protein:34,cal:380,carbs:14,fat:20,cat:"Pork",tags:["asian","low-carb","fast","toddler-friendly"],ing:[["ground pork",1.25],["eggs",4],["cabbage",1],["carrots",2],["soy sauce",0.3],["sesame oil",0.1],["garlic",1],["ginger",1],["green onions",1]],steps:"Brown pork. Push to side, scramble eggs. Add garlic, ginger, shredded cabbage & carrots. Toss with soy & sesame."},
+  {id:"t01",name:"Turkey Stuffed Zucchini Boats",time:30,protein:38,cal:390,carbs:14,fat:16,cat:"Turkey",tags:["low-carb","toddler-friendly"],ing:[["ground turkey",1.25],["zucchini",4],["canned tomatoes",1],["shredded cheese",1],["onion",1],["garlic",1]],steps:"Halve & hollow zucchini. Brown turkey with onion, garlic, tomatoes. Fill boats, top with cheese. Bake 375°F 20 min."},
+  {id:"t02",name:"Turkey Bolognese",time:30,protein:42,cal:500,carbs:42,fat:14,cat:"Turkey",tags:["italian","meal-prep","toddler-friendly"],ing:[["ground turkey",1.5],["pasta",1],["canned tomatoes",2],["tomato paste",1],["onion",1],["carrots",1],["celery",2],["garlic",1],["parmesan",1]],steps:"Sauté veggies. Add turkey, brown well. Add tomatoes & paste, simmer 20 min. Toss with pasta & parmesan."},
+  {id:"t03",name:"Turkey Taco Skillet",time:20,protein:40,cal:440,carbs:32,fat:14,cat:"Turkey",tags:["mexican","fast","toddler-friendly"],ing:[["ground turkey",1.5],["black beans",1],["corn",2],["canned tomatoes",1],["onion",1],["garlic",1],["shredded cheese",1],["taco seasoning",1]],steps:"Brown turkey with onion, garlic, taco seasoning. Add beans, corn, tomatoes. Simmer 8 min. Top with cheese."},
+  {id:"e01",name:"Egg & Veggie Frittata",time:25,protein:35,cal:340,carbs:10,fat:20,cat:"Eggs & Veggie",tags:["vegetarian","low-carb","meal-prep","toddler-friendly"],ing:[["eggs",1.5],["spinach",1],["mushrooms",1],["bell peppers",2],["feta cheese",1],["olive oil",0.1]],steps:"Sauté veggies in oven-safe skillet. Pour in whisked eggs. Top with feta. Bake 375°F 15 min."},
+  {id:"e02",name:"Chickpea & Spinach Curry",time:25,protein:22,cal:420,carbs:52,fat:12,cat:"Eggs & Veggie",tags:["vegetarian","indian","toddler-friendly"],ing:[["chickpeas",2],["spinach",1],["canned tomatoes",1],["onion",1],["garlic",1],["ginger",1],["coconut milk",1],["rice",0.4]],steps:"Sauté onion, garlic, ginger with curry powder. Add tomatoes, chickpeas, coconut milk. Simmer 15 min. Stir in spinach."},
+  {id:"e03",name:"Black Bean Quesadillas",time:15,protein:28,cal:430,carbs:46,fat:16,cat:"Eggs & Veggie",tags:["vegetarian","mexican","fast","toddler-friendly"],ing:[["black beans",2],["tortillas",1],["shredded cheese",1.5],["bell peppers",2],["onion",1],["salsa",1],["avocado",1]],steps:"Sauté pepper & onion. Fill tortillas with beans, veggies, cheese. Cook 3 min/side. Serve with salsa & avocado."},
+  {id:"pa01",name:"Creamy Tuscan Pasta",time:25,protein:38,cal:570,carbs:44,fat:22,cat:"Pasta",tags:["italian","comfort","toddler-friendly"],ing:[["chicken breast",1.25],["pasta",1],["spinach",1],["sun-dried tomatoes",1],["heavy cream",0.5],["parmesan",1],["garlic",1],["chicken broth",0.5]],steps:"Sear chicken. Set aside. Cook garlic, sun-dried tomatoes, cream, broth, parmesan into sauce. Add pasta, spinach, sliced chicken. Toss."},
+  {id:"pa02",name:"Baked Ziti",time:30,protein:40,cal:560,carbs:48,fat:22,cat:"Pasta",tags:["italian","comfort","meal-prep","toddler-friendly"],ing:[["ground beef 90/10",1],["pasta",1],["canned tomatoes",2],["mozzarella",1],["parmesan",1],["tomato paste",1],["garlic",1],["onion",1]],steps:"Brown beef with onion & garlic. Add tomatoes & paste, simmer. Toss with pasta. Layer with cheese. Bake 375°F 20 min."},
+  {id:"pa03",name:"Chicken Alfredo",time:25,protein:48,cal:600,carbs:44,fat:26,cat:"Pasta",tags:["italian","comfort","toddler-friendly"],ing:[["chicken breast",1.5],["pasta",1],["heavy cream",0.75],["parmesan",1],["butter",0.2],["garlic",1],["parsley",1]],steps:"Sear chicken. Make Alfredo: melt butter, add garlic, pour cream, whisk in parmesan. Toss with pasta & sliced chicken."},
+  {id:"bw01",name:"Burrito Bowl Bar",time:20,protein:42,cal:500,carbs:48,fat:14,cat:"Bowl",tags:["mexican","meal-prep","toddler-friendly"],ing:[["chicken breast",1.5],["rice",0.4],["black beans",1],["corn",2],["shredded cheese",1],["salsa",1],["avocado",2],["sour cream",0.5],["lime",2]],steps:"Cook seasoned chicken. Cook rice with lime. Warm beans & corn. Set up build-your-own bowls."},
+  {id:"bw02",name:"Garlic Butter Steak Bites & Asparagus",time:20,protein:46,cal:430,carbs:8,fat:22,cat:"Bowl",tags:["low-carb","fast","toddler-friendly"],ing:[["beef sirloin",1.5],["asparagus",1.5],["butter",0.2],["garlic",1],["lemon",1],["parsley",1]],steps:"Cube steak, season well. Sear in butter 2 min/side. Cook asparagus with garlic & butter 4 min. Combine, squeeze lemon."},
+  {id:"bw03",name:"Chipotle-Style Steak Bowls",time:25,protein:48,cal:510,carbs:40,fat:18,cat:"Bowl",tags:["mexican","fast","toddler-friendly"],ing:[["flank steak",1.5],["rice",0.4],["black beans",1],["corn",2],["avocado",1],["salsa",0.5],["lime",2],["sour cream",0.5],["shredded cheese",0.5]],steps:"Season steak with chipotle, cumin, garlic. Grill or sear 4 min/side. Rest & slice. Serve over rice with all toppings."}
+];
 const CATS=["Chicken","Beef","Pork","Turkey","Eggs & Veggie","Pasta","Bowl"];
 const DF={excludeCats:[],noSweetAsian:true,noFish:true,maxTime:30,minProtein:0,lowCarb:false,vegetarian:false};
 const BF={name:"",cat:"Chicken",time:"25",protein:"35",cal:"450",carbs:"30",fat:"15",steps:"",ing:""};
 const LIKES=["Quick to make","Kid-approved","Filling","Great leftovers","Flavorful","Budget-friendly","Low cleanup","Healthy feel","Great for meal prep"];
-const DISLIKES=["Too many steps","Too spicy","Tedious prep","Picky eaters hated it","Too expensive","Too heavy","Dry","Not enough protein","Too many dishes","Bland","Messy"];
+const DISLIKES=["Too many steps","Too spicy","Tedious prep","Too expensive","Too heavy","Dry","Not enough protein","Too many dishes","Bland","Messy"];
 
 function filt(meals,f){return meals.filter(m=>{if(f.excludeCats&&f.excludeCats.includes(m.cat))return false;if(f.noSweetAsian&&m.tags.includes("sweet-asian"))return false;if(f.noFish&&(m.tags.includes("fish")||m.tags.includes("seafood")))return false;if(f.maxTime&&m.time>f.maxTime)return false;if(f.minProtein&&m.protein<f.minProtein)return false;if(f.lowCarb&&!m.tags.includes("low-carb"))return false;if(f.vegetarian&&!m.tags.includes("vegetarian"))return false;return true;});}
-function mc(meal,frys,sv){const sc=sv/4;return meal.ing.reduce((s,[item,qty])=>s+gp(item,frys,qty*sc),0);}
-function ws(pool,count){if(pool.length<=count)return[...pool];const w=pool.map(m=>Math.max(0.5,(m.rating||1)**2.2));const sel=[];const used=new Set();let t=0;while(sel.length<count&&t<800){t++;const tot=w.reduce((a,b)=>a+b,0);let r=Math.random()*tot;for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0&&!used.has(pool[i].id)){sel.push({...pool[i]});used.add(pool[i].id);break;}}}return sel;}
+function mc(meal,frys,sv){const sc=sv/4;return meal.ing.reduce((s,[i,q])=>s+gp(i,frys,q*sc),0);}
+function ws(pool,cnt){if(pool.length<=cnt)return[...pool];const w=pool.map(m=>Math.max(.5,(m.rating||1)**2.2));const sel=[],used=new Set();let t=0;while(sel.length<cnt&&t<800){t++;const tot=w.reduce((a,b)=>a+b,0);let r=Math.random()*tot;for(let i=0;i<pool.length;i++){r-=w[i];if(r<=0&&!used.has(pool[i].id)){sel.push({...pool[i]});used.add(pool[i].id);break;}}}return sel;}
 function genPlan(db,f,cnt){const pinned=db.filter(m=>m.pinned).slice(0,cnt);const pids=new Set(pinned.map(m=>m.id));const pool=filt(db.filter(m=>!m.snoozedUntil||Date.now()>m.snoozedUntil),f).filter(m=>!pids.has(m.id));return[...pinned,...ws(pool,cnt-pinned.length)].slice(0,cnt);}
 
-function encPlan(payload){
-  // Only keep fields needed for shared view — strip everything else
-  const slim={
-    v:sv,
-    g:payload.generated,
-    e:payload.extras&&payload.extras.length?payload.extras.map(e=>({n:e.name,q:e.qty,z:e.zone,nt:e.note})):[],
-    m:payload.meals.map(m=>({
-      n:m.name,c:m.cat,t:m.time,p:m.protein,k:m.cal,b:m.carbs,f:m.fat,
-      s:m.steps,i:m.ing,tg:m.tags&&m.tags.includes("toddler-friendly")?1:0
-    }))
-  };
-  const json=JSON.stringify(slim);
-  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+function encPlan(meals,sv,extras,gen){
+  const s={v:sv,g:gen,e:(extras||[]).map(e=>({n:e.name,q:e.qty,z:e.zone,nt:e.note})),m:meals.map(m=>({n:m.name,c:m.cat,t:m.time,p:m.protein,k:m.cal,b:m.carbs,f:m.fat,s:m.steps,i:m.ing,td:m.tags&&m.tags.includes("toddler-friendly")?1:0}))};
+  return btoa(unescape(encodeURIComponent(JSON.stringify(s)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 function decPlan(raw){
-  const b64=raw.replace(/-/g,'+').replace(/_/g,'/');
-  const padded=b64+('==='.slice((b64.length+3)%4||4));
+  const b64=raw.replace(/-/g,'+').replace(/_/g,'/'),padded=b64+('==='.slice((b64.length+3)%4||4));
   const d=JSON.parse(decodeURIComponent(escape(atob(padded))));
-  // Support both new slim format and old format
-  if(d.m){
-    return{
-      servings:d.v,generated:d.g,
-      extras:(d.e||[]).map(e=>({name:e.n,qty:e.q,zone:e.z,note:e.nt})),
-      meals:d.m.map(m=>({name:m.n,cat:m.c,time:m.t,protein:m.p,cal:m.k,carbs:m.b,fat:m.f,steps:m.s,ing:m.i,tags:m.tg?["family-friendly","toddler-friendly"]:["family-friendly"]}))
-    };
-  }
+  if(d.m)return{servings:d.v,generated:d.g,extras:(d.e||[]).map(e=>({name:e.n,qty:e.q,zone:e.z,note:e.nt})),meals:d.m.map(m=>({name:m.n,cat:m.c,time:m.t,protein:m.p,cal:m.k,carbs:m.b,fat:m.f,steps:m.s,ing:m.i,tags:m.td?["toddler-friendly"]:[]}))};
   return d;
 }
 
+// ── SHARED VIEW ───────────────────────────────────────────────
 function SharedView({plan}){
   const [ck,setCk]=useState({});
   const [oi,setOi]=useState({});
@@ -372,65 +367,64 @@ function SharedView({plan}){
   plan.meals.forEach(m=>{const sc=plan.servings/4;m.ing.forEach(([item,qty])=>{sm[item]=(sm[item]||0)+qty*sc;});});
   const grp={};
   Object.entries(sm).forEach(([item,qty])=>{const z=gz(item);if(!grp[z])grp[z]=[];grp[z].push({item,qty});});
-  if(plan.extras&&plan.extras.length){plan.extras.forEach(e=>{const z=e.zone||gz((e.name||'').toLowerCase())||14;if(!grp[z])grp[z]=[];grp[z].push({item:e.name,qty:e.qty,note:e.note,isExtra:true});});}
+  if(plan.extras&&plan.extras.length)plan.extras.forEach(e=>{const z=e.zone||gz((e.name||'').toLowerCase())||14;if(!grp[z])grp[z]=[];grp[z].push({item:e.name,qty:e.qty,note:e.note,isExtra:true});});
   const zShow=ZONES.filter(z=>grp[z.o]&&grp[z.o].length>0);
   const allSI=Object.keys(sm);
-  const ckCount=allSI.filter(i=>ck['s_'+i]).length;
+  const ckC=allSI.filter(i=>ck['s_'+i]).length;
   return(
-    <div style={{fontFamily:"'DM Sans',sans-serif",background:"#F7F4EE",minHeight:"100vh"}}>
-      <div className="sp-nav" style={{background:"#1E4D2B",padding:"16px 24px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10,boxShadow:"0 2px 16px rgba(0,0,0,0.2)"}}>
-        <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.3rem",color:"white"}}>🌿 FreshPlate</div>
-        <div style={{fontSize:"0.78rem",color:"rgba(255,255,255,0.75)"}}>Shared · {plan.generated} · {plan.servings} servings/meal</div>
+    <div style={{fontFamily:"'DM Sans',sans-serif",background:"#F7F4EE",minHeight:"100vh",paddingBottom:40}}>
+      <div style={{background:"#1E4D2B",padding:"14px 20px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10,boxShadow:"0 2px 16px rgba(0,0,0,.2)"}}>
+        <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.2rem",color:"#fff"}}>🌿 FreshPlate</div>
+        <div style={{fontSize:".72rem",color:"rgba(255,255,255,.75)"}}>{plan.generated} · {plan.servings} servings</div>
       </div>
-      <div className="sp-wrap" style={{maxWidth:800,margin:"0 auto",padding:"24px 16px 60px"}}>
-        <h1 className="sp-h1" style={{fontFamily:"'Playfair Display',serif",fontSize:"1.6rem",color:"#1E4D2B",marginBottom:4}}>This Week's Meals</h1>
-        <p style={{color:"#6B6357",fontSize:"0.85rem",marginBottom:20}}>{plan.meals.length} meals · tap ○ to mark done</p>
+      <div style={{maxWidth:800,margin:"0 auto",padding:"20px 14px 40px"}}>
+        <h1 style={{fontFamily:"'Playfair Display',serif",fontSize:"1.5rem",color:"#1E4D2B",marginBottom:4}}>This Week's Meal Plan</h1>
+        <p style={{color:"#6B6357",fontSize:".82rem",marginBottom:18}}>{plan.meals.length} meals · tap ○ to mark done</p>
         <div className="sp-grid">
           {plan.meals.map((meal,i)=>{
-            const done=ck['m_'+i];const sc=plan.servings/4;
-            const prot=Math.round((meal.protein||0)*sc);const cal=Math.round((meal.cal||0)*sc);
+            const done=ck['m_'+i],sc=plan.servings/4;
+            const prot=Math.round((meal.protein||0)*sc),cal=Math.round((meal.cal||0)*sc);
             return(
-              <div key={i} style={{background:"white",border:`2px solid ${done?"#4A8C5C":"#DDD7CC"}`,borderRadius:14,overflow:"hidden",opacity:done?0.6:1,transition:"all .2s",boxShadow:"0 1px 3px rgba(0,0,0,0.06)"}}>
-                <div style={{background:done?"#4A8C5C":"linear-gradient(135deg,#1E4D2B,#2D6A3F)",padding:"14px 14px 10px"}}>
+              <div key={i} style={{background:"#fff",border:`2px solid ${done?"#4A8C5C":"#DDD7CC"}`,borderRadius:14,overflow:"hidden",opacity:done?.6:1,transition:"all .2s",boxShadow:"0 1px 3px rgba(0,0,0,.06)"}}>
+                <div style={{background:done?"#4A8C5C":"linear-gradient(135deg,#1E4D2B,#2D6A3F)",padding:"13px 13px 9px"}}>
                   <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",gap:8}}>
                     <div style={{flex:1}}>
-                      <div style={{fontSize:"0.62rem",fontWeight:700,letterSpacing:".8px",textTransform:"uppercase",color:"rgba(255,255,255,0.65)",marginBottom:2}}>{meal.cat}</div>
-                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1rem",color:"white",lineHeight:1.25,marginBottom:4}}>{meal.name}</div>
-                      <div style={{fontSize:"0.73rem",color:"rgba(255,255,255,0.8)"}}>⏱ {meal.time}m · ~{prot}g protein · ~{cal} cal</div>
-                      {meal.tags&&meal.tags.includes("toddler-friendly")&&<div style={{marginTop:5,display:"inline-flex",alignItems:"center",gap:3,background:"rgba(255,220,60,0.3)",border:"1px solid rgba(255,200,0,0.4)",borderRadius:20,padding:"1px 8px",fontSize:"0.67rem",fontWeight:700,color:"white"}}>👶 toddler plate ok</div>}
+                      <div style={{fontSize:".6rem",fontWeight:700,letterSpacing:".8px",textTransform:"uppercase",color:"rgba(255,255,255,.65)",marginBottom:2}}>{meal.cat}</div>
+                      <div style={{fontFamily:"'Playfair Display',serif",fontSize:".96rem",color:"#fff",lineHeight:1.25,marginBottom:4}}>{meal.name}</div>
+                      <div style={{fontSize:".71rem",color:"rgba(255,255,255,.8)"}}>⏱ {meal.time}m · ~{prot}g protein · ~{cal} cal</div>
+                      {meal.tags&&meal.tags.includes("toddler-friendly")&&<div style={{marginTop:5,display:"inline-flex",alignItems:"center",gap:3,background:"rgba(255,220,60,.3)",border:"1px solid rgba(255,200,0,.4)",borderRadius:20,padding:"1px 8px",fontSize:".65rem",fontWeight:700,color:"#fff"}}>👶 toddler plate ok</div>}
                     </div>
-                    <button onClick={()=>tog('m_'+i)} style={{background:done?"rgba(255,255,255,0.25)":"rgba(255,255,255,0.15)",border:"2px solid rgba(255,255,255,0.4)",borderRadius:"50%",width:36,height:36,cursor:"pointer",fontSize:"1.1rem",color:"white",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{done?"✓":"○"}</button>
+                    <button onClick={()=>tog('m_'+i)} style={{background:done?"rgba(255,255,255,.25)":"rgba(255,255,255,.15)",border:"2px solid rgba(255,255,255,.4)",borderRadius:"50%",width:34,height:34,fontSize:"1rem",color:"#fff",flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center",cursor:"pointer"}}>{done?"✓":"○"}</button>
                   </div>
                 </div>
-                <div style={{padding:"10px 14px"}}>
-                  <p style={{fontSize:"0.8rem",color:"#6B6357",lineHeight:1.55,marginBottom:8}}>{meal.steps}</p>
-                  <button onClick={()=>setOi(p=>({...p,[i]:!p[i]}))} style={{background:"none",border:"none",cursor:"pointer",fontSize:"0.72rem",fontWeight:700,color:"#1E4D2B"}}>{oi[i]?"▲ Hide":"▼ Show"} ingredients ({meal.ing&&meal.ing.length})</button>
-                  {oi[i]&&<div style={{marginTop:6}}>{meal.ing&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return<div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:"0.77rem",padding:"2px 0",borderBottom:"1px solid #F3EFE8"}}><span>{fmtQty(item,sq)}{item}</span></div>;})}</div>}
+                <div style={{padding:"10px 13px"}}>
+                  <p style={{fontSize:".78rem",color:"#6B6357",lineHeight:1.55,marginBottom:8}}>{meal.steps}</p>
+                  <button onClick={()=>setOi(p=>({...p,[i]:!p[i]}))} style={{background:"none",border:"none",cursor:"pointer",fontSize:".7rem",fontWeight:700,color:"#1E4D2B"}}>{oi[i]?"▲ Hide":"▼ Show"} ingredients</button>
+                  {oi[i]&&<div style={{marginTop:6}}>{meal.ing&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return<div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:".75rem",padding:"3px 0",borderBottom:"1px solid #F3EFE8"}}><span>{fq(item,sq)}{item}</span></div>;})}</div>}
                 </div>
               </div>
             );
           })}
         </div>
-        <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"1.25rem",color:"#1E4D2B",marginBottom:4}}>🛒 Shopping List</h2>
-        <p style={{color:"#6B6357",fontSize:"0.82rem",marginBottom:14}}>{ckCount}/{allSI.length} checked · Fry's store path</p>
+        <h2 style={{fontFamily:"'Playfair Display',serif",fontSize:"1.2rem",color:"#1E4D2B",marginBottom:4}}>🛒 Shopping List</h2>
+        <p style={{color:"#6B6357",fontSize:".8rem",marginBottom:14}}>{ckC}/{allSI.length} checked · Fry's store path</p>
         {zShow.map(z=>{
           const items=grp[z.o]||[];
           return(
             <div key={z.z} style={{marginBottom:10,border:`1.5px solid ${z.c}`,borderRadius:12,overflow:"hidden"}}>
-              <div style={{background:z.c,padding:"8px 14px",fontWeight:700,fontSize:"0.82rem",display:"flex",justifyContent:"space-between"}}>
+              <div style={{background:z.c,padding:"8px 14px",fontWeight:700,fontSize:".8rem",display:"flex",justifyContent:"space-between"}}>
                 <span>{z.z}</span>
-                <span style={{fontSize:"0.72rem",fontWeight:400,opacity:.7}}>{items.filter(({item,isExtra,extraId})=>ck[(isExtra?'ex_'+extraId:'s_'+item)]).length}/{items.length}</span>
+                <span style={{fontSize:".7rem",fontWeight:400,opacity:.7}}>{items.filter(({item})=>ck['s_'+item]).length}/{items.length}</span>
               </div>
-              <div style={{background:"white"}}>
+              <div style={{background:"#fff"}}>
                 {items.map(({item,qty,isExtra,note},idx)=>{
-                  const k=isExtra?'ex_'+idx:'s_'+item;
-                  const done=ck[k];
+                  const k=isExtra?'ex_'+idx:'s_'+item,done=ck[k];
                   const q=typeof qty==="number"?qty:parseFloat(qty)||1;
                   return(
                     <div key={k} onClick={()=>tog(k)} style={{display:"flex",alignItems:"center",gap:10,padding:"10px 14px",borderBottom:"1px solid #F5F2EE",cursor:"pointer",background:done?"#F8FBF8":undefined}}>
-                      <div style={{width:22,height:22,border:`2px solid ${done?"#2D6A3F":"#CCC"}`,borderRadius:4,background:done?"#2D6A3F":undefined,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all .15s"}}>{done&&<span style={{color:"white",fontSize:"0.8rem",fontWeight:700}}>✓</span>}</div>
-                      <span style={{flex:1,fontSize:"0.85rem",fontWeight:600,textDecoration:done?"line-through":"none",color:done?"#9E9E9E":undefined}}>{isExtra&&"➕ "}{item}{note&&<span style={{fontWeight:400,color:"#9E9E9E",marginLeft:5,fontSize:"0.76rem"}}>— {note}</span>}</span>
-                      <span style={{fontSize:"0.8rem",color:done?"#9E9E9E":"#1E4D2B",fontWeight:700}}>{q%1===0?q:q.toFixed(2)}</span>
+                      <div style={{width:22,height:22,border:`2px solid ${done?"#2D6A3F":"#CCC"}`,borderRadius:4,background:done?"#2D6A3F":undefined,display:"flex",alignItems:"center",justifyContent:"center",flexShrink:0,transition:"all .15s"}}>{done&&<span style={{color:"#fff",fontSize:".78rem",fontWeight:700}}>✓</span>}</div>
+                      <span style={{flex:1,fontSize:".83rem",fontWeight:600,textDecoration:done?"line-through":"none",color:done?"#9E9E9E":undefined}}>{isExtra&&"➕ "}{item}{note&&<span style={{fontWeight:400,color:"#9E9E9E",marginLeft:5,fontSize:".74rem"}}>— {note}</span>}</span>
+                      <span style={{fontSize:".78rem",color:done?"#9E9E9E":"#1E4D2B",fontWeight:700}}>{isExtra?(q%1===0?q:parseFloat(q).toFixed(1)):fq(item,q)}</span>
                     </div>
                   );
                 })}
@@ -438,284 +432,378 @@ function SharedView({plan}){
             </div>
           );
         })}
-        <div style={{marginTop:20,textAlign:"center",fontSize:"0.74rem",color:"#9E9E9E"}}>🌿 FreshPlate</div>
+        <div style={{marginTop:20,textAlign:"center",fontSize:".72rem",color:"#9E9E9E"}}>🌿 FreshPlate · Marana, AZ</div>
       </div>
     </div>
   );
 }
 
+// ── COOK MODE ─────────────────────────────────────────────────
+function CookMode({meal,sv,onClose}){
+  const [doneSteps,setDs]=useState(new Set());
+  const sc=sv/4;
+  const steps=meal.steps.split(/\.\s+/).filter(s=>s.trim().length>2);
+  return(
+    <div className="cook-screen">
+      <div className="cook-hdr">
+        <div>
+          <div style={{fontSize:".7rem",opacity:.7,textTransform:"uppercase",letterSpacing:".6px"}}>{meal.cat}</div>
+          <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1.1rem"}}>{meal.name}</div>
+        </div>
+        <button onClick={onClose} style={{background:"rgba(255,255,255,.15)",border:"1px solid rgba(255,255,255,.3)",color:"#fff",borderRadius:20,padding:"6px 14px",fontWeight:700,fontSize:".78rem"}}>✕ Done</button>
+      </div>
+      <div className="cook-body">
+        <div className="cook-ing" style={{marginBottom:20}}>
+          <div style={{fontWeight:700,fontSize:".78rem",opacity:.7,textTransform:"uppercase",letterSpacing:".5px",marginBottom:8}}>Ingredients ({sv} servings)</div>
+          {meal.ing.map(([item,qty])=>{const sq=qty*sc;return<div key={item} className="cook-ing-row"><span>{fq(item,sq)}{item}</span></div>;})}
+        </div>
+        <div style={{fontWeight:700,fontSize:".78rem",opacity:.7,textTransform:"uppercase",letterSpacing:".5px",marginBottom:10}}>Steps ({steps.length})</div>
+        {steps.map((step,i)=>(
+          <div key={i} className={`cook-step${doneSteps.has(i)?" done":""}`} onClick={()=>setDs(p=>{const n=new Set(p);n.has(i)?n.delete(i):n.add(i);return n;})}>
+            <div className="cook-num">{i+1}</div>
+            <div style={{flex:1}}>{step.trim()}{step.trim().endsWith(".")?"":" ."}</div>
+          </div>
+        ))}
+        <div style={{textAlign:"center",marginTop:20,fontSize:".8rem",opacity:.6}}>{doneSteps.size}/{steps.length} steps done</div>
+      </div>
+    </div>
+  );
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────
 function App(){
   const [tab,setTab]=useState("meals");
   const [sv,setSv]=useState(3);
   const [mc2,setMc]=useState(4);
   const [filters,setFilters]=useState(DF);
-  const [fo,setFo]=useState(true);
-  const [db,setDb]=useState(()=>MEALS.map(m=>({...m,rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:false,snoozedUntil:null})));
+  const [fo,setFo]=useState(false);
+  const [db,setDb]=useState(()=>MEALS.map(m=>({...m,rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:false,snoozedUntil:null,note:""})));
   const [week,setWeek]=useState([]);
-  const [ei,setEi]=useState({});
-  const [aiIn,setAiIn]=useState("");
-  const [aiR,setAiR]=useState("");
-  const [aiL,setAiL]=useState(false);
+  const [calAssign,setCalAssign]=useState({});// dayIdx->mealId
+  const [extras,setExtras]=useState([]);
+  const [ckShop,setCkShop]=useState({});
+  const [budget,setBudget]=useState(150);
+  const [ei,setEi]=useState({});// expanded ingredients
+  const [pantry,setPantry]=useState([]);
+  const [pantryIn,setPantryIn]=useState("");
+  const [cookMeal,setCookMeal]=useState(null);
+  const [shareUrl,setShareUrl]=useState(null);
+  const [copied,setCopied]=useState(false);
   const [showAdd,setShowAdd]=useState(false);
   const [showAiR,setShowAiR]=useState(false);
   const [aiRI,setAiRI]=useState("");
   const [aiRL,setAiRL]=useState(false);
   const [addF,setAddF]=useState(BF);
-  const [extras,setExtras]=useState([]);
-  const [ckShop,setCkShop]=useState({});
-  const [shareUrl,setShareUrl]=useState(null);
-  const [copied,setCopied]=useState(false);
+  const [aiIn,setAiIn]=useState("");
+  const [aiR,setAiR]=useState("");
+  const [aiL,setAiL]=useState(false);
+  const [noteEdit,setNoteEdit]=useState({});
   const loaded=useRef(false);
 
-  const [sharedPlan]=useState(()=>{
-    try{const p=new URLSearchParams(window.location.search);const raw=p.get("p")||p.get("plan");if(!raw)return null;return decPlan(raw);}catch{return null;}
-  });
+  const [sharedPlan]=useState(()=>{try{const p=new URLSearchParams(window.location.search);const raw=p.get("p")||p.get("plan");if(!raw)return null;return decPlan(raw);}catch{return null;}});
 
   useEffect(()=>{
     if(sharedPlan)return;
-    try{const r=store.get(SK);if(r){const d=JSON.parse(r.value);if(d.db)setDb(d.db);if(d.week&&d.week.length)setWeek(d.week);if(d.sv)setSv(d.sv);if(d.mc)setMc(d.mc);if(d.filters)setFilters({...DF,...d.filters});if(d.extras)setExtras(d.extras);if(d.ckShop)setCkShop(d.ckShop);}}catch(_){}
+    const d=ls.get(SK);
+    if(d){
+      if(d.db)setDb(d.db);if(d.week&&d.week.length)setWeek(d.week);
+      if(d.sv)setSv(d.sv);if(d.mc)setMc(d.mc);if(d.filters)setFilters({...DF,...d.filters});
+      if(d.extras)setExtras(d.extras);if(d.ckShop)setCkShop(d.ckShop);
+      if(d.calAssign)setCalAssign(d.calAssign);if(d.budget)setBudget(d.budget);
+      if(d.pantry)setPantry(d.pantry);
+    }
     loaded.current=true;
   },[sharedPlan]);
 
-  const persist=useCallback((patch)=>{try{store.set(SK,JSON.stringify({db,week,sv,mc:mc2,filters,extras,ckShop,...patch}));}catch(_){};},[db,week,sv,mc2,filters,extras,ckShop]);
-  const gen=useCallback((d=db,f=filters,c=mc2)=>{const p=genPlan(d,f,c);setWeek(p);persist({db:d,week:p,filters:f,mc:c});},[db,filters,mc2,persist]);
+  const save=useCallback((patch={})=>{ls.set(SK,{db,week,sv,mc:mc2,filters,extras,ckShop,calAssign,budget,pantry,...patch});},[db,week,sv,mc2,filters,extras,ckShop,calAssign,budget,pantry]);
+  const gen=useCallback((d=db,f=filters,c=mc2)=>{const p=genPlan(d,f,c);setWeek(p);ls.set(SK,{db:d,week:p,sv,mc:c,filters:f,extras,ckShop,calAssign,budget,pantry});},[db,filters,mc2,sv,extras,ckShop,calAssign,budget,pantry]);
   useEffect(()=>{if(loaded.current&&week.length===0)gen();});
 
-  const swap=id=>{const cur=new Set(week.map(m=>m.id));const pool=filt(db.filter(m=>!m.snoozedUntil||Date.now()>m.snoozedUntil),filters).filter(m=>!cur.has(m.id));const alt=ws(pool,1);if(!alt.length)return;const nw=week.map(m=>m.id===id?{...alt[0]}:m);setWeek(nw);persist({week:nw});};
-  const pin=id=>{const u=l=>l.map(m=>m.id===id?{...m,pinned:!m.pinned}:m);const d2=u(db);const pm=d2.find(m=>m.id===id);let w2=u(week);if(pm&&pm.pinned&&!w2.find(m=>m.id===id))w2=[...w2,pm].slice(0,mc2+1);setDb(d2);setWeek(w2);persist({db:d2,week:w2});};
-  const snooze=id=>{const until=Date.now()+14*24*60*60*1000;const u=l=>l.map(m=>m.id===id?{...m,snoozedUntil:until}:m);const d2=u(db);const w2=week.filter(m=>m.id!==id);setDb(d2);setWeek(w2);persist({db:d2,week:w2});};
-  const rate=(id,stars)=>{const u=l=>l.map(m=>{if(m.id!==id)return m;const nc=(m.ratingCount||0)+1;return{...m,rating:((m.rating||0)*(m.ratingCount||0)+stars)/nc,ratingCount:nc};});const d2=u(db);const w2=u(week);setDb(d2);setWeek(w2);persist({db:d2,week:w2});};
-  const fb=(id,type,tag)=>{const u=l=>l.map(m=>{if(m.id!==id)return m;const k=type==="like"?"likes":"dislikes";const cur=m[k]||[];return{...m,[k]:cur.includes(tag)?cur.filter(t=>t!==tag):[...cur,tag]};});const d2=u(db);const w2=u(week);setDb(d2);setWeek(w2);persist({db:d2,week:w2});};
+  const swap=id=>{const cur=new Set(week.map(m=>m.id));const pool=filt(db.filter(m=>!m.snoozedUntil||Date.now()>m.snoozedUntil),filters).filter(m=>!cur.has(m.id));const alt=ws(pool,1);if(!alt.length)return;const nw=week.map(m=>m.id===id?{...alt[0]}:m);setWeek(nw);save({week:nw});};
+  const pin=id=>{const u=l=>l.map(m=>m.id===id?{...m,pinned:!m.pinned}:m);const d2=u(db);const pm=d2.find(m=>m.id===id);let w2=u(week);if(pm&&pm.pinned&&!w2.find(m=>m.id===id))w2=[...w2,pm].slice(0,mc2+1);setDb(d2);setWeek(w2);save({db:d2,week:w2});};
+  const snooze=id=>{const d2=db.map(m=>m.id===id?{...m,snoozedUntil:Date.now()+14*24*60*60*1000}:m);const w2=week.filter(m=>m.id!==id);setDb(d2);setWeek(w2);save({db:d2,week:w2});};
+  const rate=(id,stars)=>{const u=l=>l.map(m=>{if(m.id!==id)return m;const nc=(m.ratingCount||0)+1;return{...m,rating:((m.rating||0)*(m.ratingCount||0)+stars)/nc,ratingCount:nc};});const d2=u(db);const w2=u(week);setDb(d2);setWeek(w2);save({db:d2,week:w2});};
+  const fb=(id,type,tag)=>{const u=l=>l.map(m=>{if(m.id!==id)return m;const k=type==="like"?"likes":"dislikes";const cur=m[k]||[];return{...m,[k]:cur.includes(tag)?cur.filter(t=>t!==tag):[...cur,tag]};});const d2=u(db);const w2=u(week);setDb(d2);setWeek(w2);save({db:d2,week:w2});};
   const uf=(k,v)=>{const nf={...filters,[k]:v};setFilters(nf);gen(db,nf,mc2);};
   const rf=()=>{setFilters(DF);gen(db,DF,mc2);};
-  const addMeal=()=>{if(!addF.name.trim())return;const ing=addF.ing.split("\n").filter(l=>l.trim()).map(line=>{const p=line.trim().split(",");return[p[0]&&p[0].trim()||"ingredient",parseFloat(p[1])||1];});const m={id:"c_"+Date.now(),name:addF.name.trim(),cat:addF.cat,time:parseInt(addF.time)||25,protein:parseInt(addF.protein)||30,cal:parseInt(addF.cal)||400,carbs:parseInt(addF.carbs)||30,fat:parseInt(addF.fat)||14,tags:["family-friendly","toddler-friendly"],ing:ing.length?ing:[["chicken breast",1]],steps:addF.steps.trim()||"Follow your recipe.",rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:true,snoozedUntil:null};const d2=[...db,m];setDb(d2);persist({db:d2});setAddF(BF);setShowAdd(false);};
-  const addAiR=async()=>{if(!aiRI.trim()||aiRL)return;setAiRL(true);try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,messages:[{role:"user",content:'Convert to JSON meal object. Return ONLY valid JSON, no markdown.\nDescription: "'+aiRI+'"\nFormat: {"name":"...","cat":"Chicken|Beef|Pork|Turkey|Eggs & Veggie|Pasta|Bowl","time":25,"protein":40,"cal":450,"carbs":30,"fat":15,"tags":["family-friendly"],"ing":[["ingredient",qty]],"steps":"One paragraph."}\n4 servings, Marana AZ.'}]})});const d=await r.json();const txt=(d.content&&d.content[0]&&d.content[0].text)||"{}";const parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());const m={...parsed,id:"c_"+Date.now(),rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:true,snoozedUntil:null};const d2=[...db,m];setDb(d2);persist({db:d2});setAiRI("");setShowAiR(false);}catch{alert("Couldn't parse. Try being more descriptive.");}setAiRL(false);};
-  const exportP=()=>{const rated=db.filter(m=>m.rating>0);const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),ratings:rated.map(m=>({name:m.name,cat:m.cat,rating:+m.rating.toFixed(2),ratingCount:m.ratingCount,likes:m.likes||[],dislikes:m.dislikes||[]})),filters},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="freshplate-taste-profile.json";a.click();};
-  const shareW=()=>{const b64=encPlan({meals:week.map(m=>({name:m.name,cat:m.cat,time:m.time,protein:m.protein,cal:m.cal,carbs:m.carbs,fat:m.fat,steps:m.steps,ing:m.ing,tags:m.tags})),servings:sv,extras,generated:new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})});setShareUrl(window.location.origin+window.location.pathname+"?p="+b64);setCopied(false);};
-  const copyUrl=()=>{navigator.clipboard.writeText(shareUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500);});};
-  const tkShop=key=>{const n={...ckShop,[key]:!ckShop[key]};setCkShop(n);persist({ckShop:n});};
+  const saveNote=(id,txt)=>{const d2=db.map(m=>m.id===id?{...m,note:txt}:m);setDb(d2);save({db:d2});};
+  const assignDay=(dayIdx,mealId)=>{const ca={...calAssign,[dayIdx]:mealId};setCalAssign(ca);save({calAssign:ca});};
+  const addPantry=()=>{if(!pantryIn.trim())return;const p=[...pantry,pantryIn.trim()];setPantry(p);setPantryIn("");save({pantry:p});};
+  const rmPantry=item=>{const p=pantry.filter(x=>x!==item);setPantry(p);save({pantry:p});};
+  const tkShop=key=>{const n={...ckShop,[key]:!ckShop[key]};setCkShop(n);save({ckShop:n});};
+  const addMeal=()=>{if(!addF.name.trim())return;const ing=addF.ing.split("\n").filter(l=>l.trim()).map(l=>{const p=l.split(",");return[p[0]&&p[0].trim()||"ingredient",parseFloat(p[1])||1];});const m={id:"c_"+Date.now(),name:addF.name.trim(),cat:addF.cat,time:parseInt(addF.time)||25,protein:parseInt(addF.protein)||30,cal:parseInt(addF.cal)||400,carbs:parseInt(addF.carbs)||30,fat:parseInt(addF.fat)||14,tags:["toddler-friendly"],ing:ing.length?ing:[["chicken breast",1]],steps:addF.steps.trim()||"Follow your recipe.",rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:true,snoozedUntil:null,note:""};const d2=[...db,m];setDb(d2);save({db:d2});setAddF(BF);setShowAdd(false);};
+  const addAiR=async()=>{if(!aiRI.trim()||aiRL)return;setAiRL(true);try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:800,messages:[{role:"user",content:'Convert to JSON. Return ONLY valid JSON, no markdown.\nDescription: "'+aiRI+'"\nFormat: {"name":"...","cat":"Chicken|Beef|Pork|Turkey|Eggs & Veggie|Pasta|Bowl","time":25,"protein":40,"cal":450,"carbs":30,"fat":15,"tags":[],"ing":[["ingredient",qty]],"steps":"paragraph."}\n4 servings.'}]})});const d=await r.json();const txt=(d.content&&d.content[0]&&d.content[0].text)||"{}";const parsed=JSON.parse(txt.replace(/```json|```/g,"").trim());const m={...parsed,id:"c_"+Date.now(),rating:0,ratingCount:0,likes:[],dislikes:[],pinned:false,custom:true,snoozedUntil:null,note:""};const d2=[...db,m];setDb(d2);save({db:d2});setAiRI("");setShowAiR(false);}catch{alert("Couldn't parse. Try being more descriptive.");}setAiRL(false);};
+  const exportP=()=>{const rated=db.filter(m=>m.rating>0);const blob=new Blob([JSON.stringify({exportedAt:new Date().toISOString(),ratings:rated.map(m=>({name:m.name,cat:m.cat,rating:+m.rating.toFixed(2),ratingCount:m.ratingCount,likes:m.likes||[],dislikes:m.dislikes||[]})),filters,pantry},null,2)],{type:"application/json"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="freshplate-profile.json";a.click();};
+  const doShare=()=>{const b64=encPlan(week,sv,extras,new Date().toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}));setShareUrl(window.location.origin+window.location.pathname+"?p="+b64);setCopied(false);};
+  async function askAI(){if(!aiIn.trim()||aiL)return;setAiL(true);setAiR("");const pr=db.filter(m=>m.rating>0).sort((a,b)=>b.rating-a.rating).slice(0,6).map(m=>m.name+" — "+m.rating.toFixed(1)+"★").join("\n");try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:"Family meal planner. Marana AZ. "+sv+" servings. Wife dislikes sweet Asian. Toddler. This week: "+week.map(m=>m.name).join(", ")+". Pantry: "+(pantry.join(", ")||"none")+". Profile:\n"+(pr||"No ratings yet.")+"\nUser: "+aiIn+"\nBe concise."}]})});const d=await r.json();setAiR((d.content&&d.content[0]&&d.content[0].text)||"No response.");}catch{setAiR("Network error.");}setAiL(false);}
 
   if(sharedPlan)return <SharedView plan={sharedPlan}/>;
 
   const rated=db.filter(m=>m.rating>0).sort((a,b)=>b.rating-a.rating);
   const snoozed=db.filter(m=>m.snoozedUntil&&Date.now()<m.snoozedUntil);
-  const ft=mc(week.reduce((s,m)=>({ing:[...s.ing,...m.ing.map(([item,qty])=>[item,qty*sv/4])]}),{ing:[]}),(true),1);
   const frysT=week.reduce((s,m)=>s+mc(m,true,sv),0);
   const safT=week.reduce((s,m)=>s+mc(m,false,sv),0);
-  const fw=frysT<=safT;const sav=Math.abs(frysT-safT);
+  const fw=frysT<=safT,sav=Math.abs(frysT-safT);
   const wn=week.reduce((a,m)=>{const sc=sv/4;return{cal:a.cal+(m.cal||0)*sc,protein:a.protein+(m.protein||0)*sc,carbs:a.carbs+(m.carbs||0)*sc,fat:a.fat+(m.fat||0)*sc};},{cal:0,protein:0,carbs:0,fat:0});
-  const shopMap={};week.forEach(m=>{const sc=sv/4;m.ing.forEach(([item,qty])=>{shopMap[item]=(shopMap[item]||0)+qty*sc;});});
+  const shopMap={};week.forEach(m=>{const sc=sv/4;m.ing.forEach(([i,q])=>{shopMap[i]=(shopMap[i]||0)+q*sc;});});
   const grpd={};Object.entries(shopMap).forEach(([item,qty])=>{const z=gz(item);if(!grpd[z])grpd[z]=[];grpd[z].push({item,qty});});extras.forEach(e=>{const z=e.zone||gz((e.name||'').toLowerCase())||14;if(!grpd[z])grpd[z]=[];grpd[z].push({item:e.name,qty:e.qty,note:e.note,isExtra:true,eid:e.id});});
   const zShow=ZONES.filter(z=>grpd[z.o]&&grpd[z.o].length>0);
   const allSK=[...Object.keys(shopMap),...extras.map(e=>'ex_'+e.id)];
   const ckCnt=allSK.filter(k=>ckShop[k]).length;
   const afc=[filters.noSweetAsian!==DF.noSweetAsian,filters.noFish!==DF.noFish,filters.lowCarb,filters.vegetarian,filters.maxTime<30,filters.minProtein>0,(filters.excludeCats&&filters.excludeCats.length>0)].filter(Boolean).length;
+  const budgetPct=Math.min(100,(frysT/budget)*100);
 
-  async function askAI(){if(!aiIn.trim()||aiL)return;setAiL(true);setAiR("");const pr=rated.slice(0,6).map(m=>m.name+" — "+m.rating.toFixed(1)+"★").join("\n");try{const r=await fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:1000,messages:[{role:"user",content:"Family meal planner. Marana AZ. "+sv+" servings/meal. Wife dislikes sweet Asian. Toddler in family. This week: "+week.map(m=>m.name).join(", ")+". Taste profile:\n"+(pr||"No ratings yet.")+"\nUser: "+aiIn+"\nBe concise."}]})});const d=await r.json();setAiR((d.content&&d.content[0]&&d.content[0].text)||"No response.");}catch{setAiR("Network error.");}setAiL(false);}
+  const TABS=[["meals","🍽","Meals"],["cal","📅","Planner"],["shop","🛒","Shop"],["taste","⭐","Taste"],["library","📚","Library"]];
+
+  const MealCard=({meal})=>{
+    const sc=sv/4,fc=mc(meal,true,sv),sfc=mc(meal,false,sv),fw2=fc<=sfc;
+    const sI=ei[meal.id],dm=db.find(m=>m.id===meal.id)||meal;
+    const mP=Math.round((meal.protein||0)*sc),mC=Math.round((meal.cal||0)*sc),mCb=Math.round((meal.carbs||0)*sc),mF=Math.round((meal.fat||0)*sc);
+    const mx=Math.max(mP,mCb,mF,1);
+    const cpg=mC>0&&(mP+mCb+mF)>0?(mC/(mP+mCb+mF)).toFixed(1):"—";
+    const ppg=mP>0&&mC>0?((mP*4/mC)*100).toFixed(0)+"%":"—";
+    const inPantry=meal.ing.some(([i])=>pantry.map(p=>p.toLowerCase()).includes(i.toLowerCase()));
+    return(
+      <div className={"mcard fade-in"+(dm.pinned?" pinned":"")}>
+        <div className="mcard-top">
+          <button className="mcard-pin" onClick={()=>pin(meal.id)}>{dm.pinned?"📌":"🖇️"}</button>
+          <div className="mcard-badges">
+            <span className="mbadge">⏱ {meal.time}m</span>
+            <span className="mbadge">{meal.cat}</span>
+            {meal.tags&&meal.tags.includes("toddler-friendly")&&<span className="mbadge toddler">👶 toddler ok</span>}
+            {inPantry&&<span className="mbadge" style={{background:"rgba(184,150,62,.4)"}}>🥫 pantry item</span>}
+          </div>
+          <div className="mcard-name">{meal.name}</div>
+          <div className="mcard-meta">
+            <span>~{mP}g protein</span><span>~{mC} cal</span><span>{sv} serving{sv!==1?"s":""}</span>
+          </div>
+          <div className="density-row" style={{marginTop:5}}>
+            <span className="dp">🔥 {cpg} cal/g</span>
+            <span className="dp">💪 {ppg} protein</span>
+          </div>
+          <div className="mcard-tags">{meal.tags&&meal.tags.filter(t=>t!=="toddler-friendly").slice(0,3).map(t=><span key={t} className="mtag">{t}</span>)}</div>
+        </div>
+        <div className="mcard-body">
+          <p className="mcard-steps">{meal.steps}</p>
+          <div className="macro-strip">
+            {[["Protein",mP,"g","#2D6A3F"],["Carbs",mCb,"g","#B8963E"],["Fat",mF,"g","#C4622D"],["Cal",mC,"","#4A8C5C"]].map(([lbl,val,unit,color])=>(
+              <div key={lbl} className="ms-item">
+                <div className="ms-val" style={{color}}>{val}{unit}</div>
+                <div className="ms-lbl">{lbl}</div>
+                {lbl!=="Cal"&&<div className="ms-bar"><div className="ms-fill" style={{width:Math.min(100,val/mx*100)+"%",background:color}}/></div>}
+              </div>
+            ))}
+          </div>
+          <div>
+            <button className="ing-toggle" onClick={()=>setEi(p=>({...p,[meal.id]:!p[meal.id]}))}>
+              {sI?"▲ Hide":"▼ Show"} ingredients ({meal.ing.length})
+            </button>
+            {sI&&meal.ing.map(([item,qty])=>{const sq=qty*sc;const haveIt=pantry.map(p=>p.toLowerCase()).includes(item.toLowerCase());return(<div key={item} className="ing-row" style={haveIt?{background:"#F0FBF3"}:{}}><span>{haveIt&&"✓ "}{fq(item,sq)}{item}</span><span className="ing-price">${gp(item,true,sq).toFixed(2)}</span></div>);})}
+          </div>
+          <div className="store-row">
+            <div className={"schip"+(fw2?" best":"")}><div className="schip-name">🛒 Fry's</div><div className="schip-price">${fc.toFixed(2)}</div>{fw2&&<div className="schip-badge">BEST</div>}</div>
+            <div className={"schip"+(!fw2?" best":"")}><div className="schip-name">🛒 Safeway</div><div className="schip-price">${sfc.toFixed(2)}</div>{!fw2&&<div className="schip-badge">BEST</div>}</div>
+          </div>
+          {/* Notes */}
+          {noteEdit[meal.id]!==undefined?(
+            <div>
+              <textarea className="note-in" value={noteEdit[meal.id]} onChange={e=>setNoteEdit(p=>({...p,[meal.id]:e.target.value}))} placeholder="Add a note about this meal..."/>
+              <div style={{display:"flex",gap:6,marginTop:4}}>
+                <button className="cact" style={{fontSize:".7rem",padding:"5px"}} onClick={()=>{saveNote(meal.id,noteEdit[meal.id]);setNoteEdit(p=>{const n={...p};delete n[meal.id];return n;});}}>💾 Save</button>
+                <button className="cact" style={{fontSize:".7rem",padding:"5px"}} onClick={()=>setNoteEdit(p=>{const n={...p};delete n[meal.id];return n;})}>Cancel</button>
+              </div>
+            </div>
+          ):dm.note?(
+            <div style={{background:"#FFF8E1",borderRadius:8,padding:"6px 9px",fontSize:".76rem",color:"#7D6008",cursor:"pointer"}} onClick={()=>setNoteEdit(p=>({...p,[meal.id]:dm.note}))}>📝 {dm.note}</div>
+          ):null}
+          <div className="rating-wrap">
+            <div className="rlbl">Rate this meal</div>
+            <div className="stars">{[1,2,3,4,5].map(s=><span key={s} className={"star"+(s<=Math.round(dm.rating||0)?" on":"")} onClick={()=>rate(meal.id,s)}>★</span>)}
+              {dm.rating>0&&<span style={{fontSize:".71rem",color:"var(--muted)",marginLeft:4,alignSelf:"center"}}>{dm.rating.toFixed(1)} ({dm.ratingCount}×)</span>}
+            </div>
+            {dm.rating>0&&<div>
+              <div className="rlbl" style={{marginTop:6}}>👍 Worked:</div>
+              <div className="fb-chips">{LIKES.map(o=><button key={o} className={"fbchip"+((dm.likes||[]).includes(o)?" li":"")} onClick={()=>fb(meal.id,"like",o)}>{o}</button>)}</div>
+              <div className="rlbl" style={{marginTop:5}}>👎 Didn't:</div>
+              <div className="fb-chips">{DISLIKES.map(o=><button key={o} className={"fbchip"+((dm.dislikes||[]).includes(o)?" di":"")} onClick={()=>fb(meal.id,"dislike",o)}>{o}</button>)}</div>
+            </div>}
+          </div>
+          <div className="card-acts">
+            {!dm.pinned&&<button className="cact" style={{borderColor:"var(--terra)",color:"var(--terra)"}} onClick={()=>swap(meal.id)}>🔄 Swap</button>}
+            {dm.pinned&&<button className="cact" style={{color:"var(--gold)",borderColor:"var(--gold)"}} onClick={()=>pin(meal.id)}>📌 Unpin</button>}
+            <button className="cook-btn" onClick={()=>setCookMeal(meal)}>👨‍🍳 Cook</button>
+            <button className="cact" onClick={()=>setNoteEdit(p=>({...p,[meal.id]:dm.note||""}))}>📝</button>
+            <button className="cact red" onClick={()=>snooze(meal.id)}>😴</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return(
     <div>
-      <nav className="nav">
-        <div className="brand">🌿 FreshPlate <span>{db.length} MEALS</span></div>
-        <div className="nav-tabs">{[["meals","This Week"],["taste","Taste"],["shop","Shopping"],["library","Library"]].map(([k,l])=><button key={k} className={"ntab"+(tab===k?" on":"")} onClick={()=>setTab(k)}>{l}</button>)}</div>
-      </nav>
-      <div className="wrap">
+      {cookMeal&&<CookMode meal={cookMeal} sv={sv} onClose={()=>setCookMeal(null)}/>}
+      <div className="top-nav">
+        <div className="brand">🌿 FreshPlate <span className="brand-pill">{db.length} MEALS</span></div>
+        <div className="desk-tabs">{TABS.map(([k,,l])=><button key={k} className={"dtab"+(tab===k?" on":"")} onClick={()=>setTab(k)}>{l}</button>)}</div>
+        <div className="top-nav-right">
+          <button className="icon-action" onClick={doShare}>🔗 Share</button>
+        </div>
+      </div>
 
-        {tab==="meals"&&<div>
-          <h1 className="page-title">This Week's Meal Plan</h1>
-          <p className="page-sub">{db.length} meals · {week.filter(m=>m.pinned).length} pinned · {rated.length} rated</p>
-          <div className="filter-panel">
-            <div className="fp-header" onClick={()=>setFo(o=>!o)}>
+      <div className="page-wrap">
+
+        {/* ── MEALS ── */}
+        {tab==="meals"&&<div className="fade-in">
+          <div className="ph"><h1>This Week's Plan</h1><p>{db.length} meals · {week.filter(m=>m.pinned).length} pinned · {rated.length} rated · {snoozed.length} snoozed</p></div>
+
+          {/* Budget bar */}
+          <div className="budget-bar">
+            <div className="bb-hdr">
+              <span>💰 Weekly Budget</span>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>
+                <span style={{color:frysT>budget?"var(--terra)":"var(--green)",fontWeight:700}}>${frysT.toFixed(0)} / </span>
+                <input type="number" value={budget} onChange={e=>{setBudget(+e.target.value);save({budget:+e.target.value});}} style={{width:60,border:"1px solid var(--border)",borderRadius:6,padding:"2px 6px",fontSize:".8rem",fontWeight:700,outline:"none",color:"var(--green)"}}/>
+              </div>
+            </div>
+            <div className="bb-track"><div className={"bb-fill"+(frysT>budget?" over":"")} style={{width:budgetPct+"%"}}/></div>
+            {frysT>budget&&<div style={{fontSize:".72rem",color:"var(--terra)",marginTop:4,fontWeight:700}}>⚠️ ${(frysT-budget).toFixed(2)} over budget — swap a meal to save</div>}
+          </div>
+
+          {/* Filters */}
+          <div className="panel" style={{padding:"14px 16px",marginBottom:16}}>
+            <div className="fp-hdr" onClick={()=>setFo(o=>!o)}>
               <div className="fp-title">🎛️ Filters {afc>0&&<span className="fp-badge">{afc} active</span>}</div>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>{afc>0&&<button className="fp-reset" onClick={e=>{e.stopPropagation();rf();}}>Reset all</button>}<span style={{color:"var(--muted)",fontSize:"0.85rem"}}>{fo?"▲":"▼"}</span></div>
+              <div style={{display:"flex",alignItems:"center",gap:8}}>{afc>0&&<button className="fp-reset" onClick={e=>{e.stopPropagation();rf();}}>Reset</button>}<span style={{color:"var(--muted)",fontSize:".82rem"}}>{fo?"▲":"▼"}</span></div>
             </div>
             {fo&&<div className="fp-body">
-              <div><div className="fp-section">Exclude Categories</div><div className="cat-chips" style={{marginTop:6}}>{CATS.map(cat=><button key={cat} className={"cchip "+(filters.excludeCats&&filters.excludeCats.includes(cat)?"excluded":"included")} onClick={()=>uf("excludeCats",filters.excludeCats&&filters.excludeCats.includes(cat)?filters.excludeCats.filter(c=>c!==cat):[...(filters.excludeCats||[]),cat])}>{filters.excludeCats&&filters.excludeCats.includes(cat)?"✗":"✓"} {cat}</button>)}</div></div>
-              <div><div className="fp-section">Dietary</div><div style={{display:"flex",flexWrap:"wrap",gap:10,marginTop:6}}>{[["noSweetAsian","🚫 No Sweet Asian"],["noFish","🚫 No Fish"],["lowCarb","🥗 Low-Carb"],["vegetarian","🌱 Vegetarian"]].map(([k2,lbl])=><label key={k2} className="fp-toggle"><input type="checkbox" checked={!!filters[k2]} onChange={e=>uf(k2,e.target.checked)}/><span className="fp-toggle-lbl">{lbl}</span></label>)}</div></div>
-              <div><div className="fp-section">Time & Nutrition</div><div style={{display:"flex",flexDirection:"column",gap:10,marginTop:6}}>
-                <div className="fp-slider-wrap"><span className="fp-slider-lbl">⏱ Max Cook Time</span><input type="range" className="fp-slider" min={15} max={60} step={5} value={filters.maxTime} onChange={e=>uf("maxTime",+e.target.value)}/><span className="fp-slider-val">{filters.maxTime}m</span></div>
-                <div className="fp-slider-wrap"><span className="fp-slider-lbl">💪 Min Protein</span><input type="range" className="fp-slider" min={0} max={55} step={5} value={filters.minProtein} onChange={e=>uf("minProtein",+e.target.value)}/><span className="fp-slider-val">{filters.minProtein>0?filters.minProtein+"g":"Any"}</span></div>
+              <div><div className="fp-sec">Exclude Categories</div><div className="cat-chips" style={{marginTop:6}}>{CATS.map(cat=><button key={cat} className={"cchip "+(filters.excludeCats&&filters.excludeCats.includes(cat)?"exc":"inc")} onClick={()=>uf("excludeCats",filters.excludeCats&&filters.excludeCats.includes(cat)?filters.excludeCats.filter(c=>c!==cat):[...(filters.excludeCats||[]),cat])}>{filters.excludeCats&&filters.excludeCats.includes(cat)?"✗":"✓"} {cat}</button>)}</div></div>
+              <div><div className="fp-sec">Dietary</div><div style={{display:"flex",flexWrap:"wrap",gap:8,marginTop:6}}>{[["noSweetAsian","🚫 No Sweet Asian"],["noFish","🚫 No Fish"],["lowCarb","🥗 Low-Carb"],["vegetarian","🌱 Vegetarian"]].map(([k2,lbl])=><label key={k2} className="fp-tog"><input type="checkbox" checked={!!filters[k2]} onChange={e=>uf(k2,e.target.checked)}/><span>{lbl}</span></label>)}</div></div>
+              <div><div className="fp-sec">Time & Nutrition</div><div style={{display:"flex",flexDirection:"column",gap:8,marginTop:6}}>
+                <div className="sl-wrap"><span className="sl-lbl">⏱ Max Cook Time</span><input type="range" className="sl" min={15} max={60} step={5} value={filters.maxTime} onChange={e=>uf("maxTime",+e.target.value)}/><span className="sl-val">{filters.maxTime}m</span></div>
+                <div className="sl-wrap"><span className="sl-lbl">💪 Min Protein</span><input type="range" className="sl" min={0} max={55} step={5} value={filters.minProtein} onChange={e=>uf("minProtein",+e.target.value)}/><span className="sl-val">{filters.minProtein>0?filters.minProtein+"g":"Any"}</span></div>
               </div></div>
             </div>}
           </div>
-          <div className="controls">
-            <div className="ctrl"><span className="ctrl-lbl">Meals/week</span><div className="num-ctrl"><button className="num-btn" onClick={()=>{const n=Math.max(1,mc2-1);setMc(n);gen(db,filters,n);}}>−</button><input className="num-val" type="number" min={1} max={10} value={mc2} onChange={e=>{const n=Math.max(1,Math.min(10,+e.target.value));setMc(n);gen(db,filters,n);}}/><button className="num-btn" onClick={()=>{const n=Math.min(10,mc2+1);setMc(n);gen(db,filters,n);}}>+</button></div></div>
-            <div className="ctrl"><span className="ctrl-lbl">Servings</span><div className="num-ctrl"><button className="num-btn" onClick={()=>setSv(v=>{const n=Math.max(1,v-1);persist({sv:n});return n;})}>−</button><input className="num-val" type="number" min={1} max={16} value={sv} onChange={e=>setSv(Math.max(1,Math.min(16,+e.target.value)))}/><button className="num-btn" onClick={()=>setSv(v=>{const n=Math.min(16,v+1);persist({sv:n});return n;})}>+</button></div></div>
-            <span style={{fontSize:"0.75rem",color:"var(--muted)"}}>{filt(db,filters).length} match</span>
+
+          {/* Controls */}
+          <div className="ctrl-bar">
+            <div className="ctrl"><span className="ctrl-lbl">Meals/wk</span><div className="num-ctrl"><button className="num-btn" onClick={()=>{const n=Math.max(1,mc2-1);setMc(n);gen(db,filters,n);}}>−</button><input className="num-val" type="number" min={1} max={10} value={mc2} onChange={e=>{const n=+e.target.value;setMc(n);gen(db,filters,n);}}/><button className="num-btn" onClick={()=>{const n=Math.min(10,mc2+1);setMc(n);gen(db,filters,n);}}>+</button></div></div>
+            <div className="ctrl"><span className="ctrl-lbl">Servings</span><div className="num-ctrl"><button className="num-btn" onClick={()=>{const n=Math.max(1,sv-1);setSv(n);save({sv:n});}}>−</button><input className="num-val" type="number" min={1} max={16} value={sv} onChange={e=>{setSv(+e.target.value);save({sv:+e.target.value});}}/><button className="num-btn" onClick={()=>{const n=Math.min(16,sv+1);setSv(n);save({sv:n});}}>+</button></div></div>
+            <span style={{fontSize:".72rem",color:"var(--muted)"}}>{filt(db,filters).length} match</span>
             <button className="regen" onClick={()=>gen()}>↺ New Week</button>
-            <button onClick={shareW} style={{background:"var(--green)",color:"white",border:"none",padding:"8px 16px",borderRadius:20,fontWeight:700,fontSize:"0.82rem",cursor:"pointer"}}>🔗 Share</button>
           </div>
+
+          {/* AI */}
           <div className="ai-panel">
-            <div className="ai-title">🤖 Meal Assistant</div>
-            <div className="ai-sub">Ask for swaps, toddler tips, budget advice, or nutrition help.</div>
-            <div className="ai-row"><input className="ai-in" placeholder='e.g. "What meals are best for the toddler this week?"' value={aiIn} onChange={e=>setAiIn(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!aiL&&askAI()}/><button className="ai-go" onClick={askAI} disabled={aiL||!aiIn.trim()}>{aiL?"...":"Ask"}</button></div>
+            <div style={{fontFamily:"'Playfair Display',serif",fontSize:"1rem",color:"var(--green)"}}>🤖 Meal Assistant</div>
+            <div style={{fontSize:".78rem",color:"var(--muted)",marginTop:2}}>Ask for swaps, pantry ideas, nutrition help, or toddler tips.</div>
+            <div className="ai-row"><input className="ai-in" placeholder='e.g. "What can I make with what I have in my pantry?"' value={aiIn} onChange={e=>setAiIn(e.target.value)} onKeyDown={e=>e.key==="Enter"&&!aiL&&askAI()}/><button className="ai-go" onClick={askAI} disabled={aiL||!aiIn.trim()}>{aiL?"...":"Ask"}</button></div>
             {aiR&&<div className="ai-resp">{aiR}</div>}
           </div>
-          {week.length===0?<div style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:"var(--r)",padding:"40px 20px",textAlign:"center",color:"var(--muted)"}}><div style={{fontSize:"2rem",marginBottom:8}}>🔍</div><p>No meals match your filters.</p></div>
-          :<div className="meal-grid">{week.map(meal=>{
-            const sc=sv/4;const fc=mc(meal,true,sv),sfc=mc(meal,false,sv),fw2=fc<=sfc;
-            const sI=ei[meal.id];const dm=db.find(m=>m.id===meal.id)||meal;
-            const mP=Math.round((meal.protein||0)*sc),mC=Math.round((meal.cal||0)*sc),mCb=Math.round((meal.carbs||0)*sc),mF=Math.round((meal.fat||0)*sc);
-            const mx=Math.max(mP,mCb,mF,1);
-            const cpg=mC>0&&(mP+mCb+mF)>0?(mC/(mP+mCb+mF)).toFixed(1):"—";
-            const ppg=mP>0&&mC>0?((mP*4/mC)*100).toFixed(0)+"%":"—";
-            return(
-              <div key={meal.id} className={"mcard"+(dm.pinned?" pinned":"")}>
-                <div className="mcard-top">
-                  <div className="mcard-top-row">
-                    <div className="mcard-badge">⏱ {meal.time}m</div>
-                    <button className="icon-btn" onClick={()=>pin(meal.id)}>{dm.pinned?"📌":"🖇️"}</button>
-                  </div>
-                  <div className="mcard-cat">{meal.cat}</div>
-                  <div className="mcard-name">{meal.name}</div>
-                  <div className="mcard-meta">
-                    <span>~{mP}g protein · ~{mC} cal · {sv} serving{sv!==1?"s":""}</span>
-                    {meal.tags&&meal.tags.includes("toddler-friendly")&&<span style={{background:"rgba(255,220,60,0.35)",border:"1px solid rgba(255,200,0,0.5)",borderRadius:20,padding:"1px 8px",fontSize:"0.68rem",fontWeight:700}}>👶 toddler plate ok</span>}
-                  </div>
-                  <div className="density-row">
-                    <span className="density-pill">🔥 {cpg} cal/g</span>
-                    <span className="density-pill">💪 {ppg} from protein</span>
-                  </div>
-                  <div className="mcard-tags">{meal.tags&&meal.tags.filter(t=>t!=="sweet-asian"&&t!=="toddler-friendly").slice(0,3).map(t=><span key={t} className="mtag">{t}</span>)}</div>
-                </div>
-                <div className="mcard-body">
-                  <p className="mcard-steps">{meal.steps}</p>
-                  <div className="macro-bar">
-                    <div className="macro-bar-title">Nutrition per serving (est.)</div>
-                    <div className="macro-row">{[["Protein",mP,"g","#2D6A3F"],["Carbs",mCb,"g","#B8963E"],["Fat",mF,"g","#C4622D"],["Cal",mC,"","#4A8C5C"]].map(([lbl,val,unit,color])=>(
-                      <div key={lbl} className="macro-item">
-                        <div className="macro-val" style={{color:color}}>{val}{unit}</div>
-                        <div className="macro-lbl">{lbl}</div>
-                        {lbl!=="Cal"&&<div className="macro-bar-bg"><div className="macro-bar-fill" style={{width:Math.min(100,val/mx*100)+"%",background:color}}/></div>}
-                      </div>
-                    ))}</div>
-                  </div>
-                  <div>
-                    <button className="ing-toggle" onClick={()=>setEi(p=>({...p,[meal.id]:!p[meal.id]}))}>
-                      {sI?"▲ Hide":"▼ Show"} ingredients ({meal.ing.length})
-                    </button>
-                    {sI&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return(<div key={item} className="ing-row"><span>{fmtQty(item,sq)}{item}</span><span className="ing-price">${gp(item,true,sq).toFixed(2)}</span></div>);})}
-                  </div>
-                  <div className="store-row">
-                    <div className={"schip"+(fw2?" best":"")}><div className="schip-name">🛒 Fry's</div><div className="schip-price">${fc.toFixed(2)}</div>{fw2&&<div className="schip-badge">BEST</div>}</div>
-                    <div className={"schip"+(!fw2?" best":"")}><div className="schip-name">🛒 Safeway</div><div className="schip-price">${sfc.toFixed(2)}</div>{!fw2&&<div className="schip-badge">BEST</div>}</div>
-                  </div>
-                  <div className="rating-wrap">
-                    <div className="rating-lbl">Rate this meal</div>
-                    <div className="stars">{[1,2,3,4,5].map(s=><span key={s} className={"star"+(s<=Math.round(dm.rating||0)?" on":"")} onClick={()=>rate(meal.id,s)}>★</span>)}
-                      {dm.rating>0&&<span style={{fontSize:"0.73rem",color:"var(--muted)",marginLeft:5,alignSelf:"center"}}>{dm.rating.toFixed(1)} ({dm.ratingCount}×)</span>}
-                    </div>
-                    {dm.rating>0&&<div>
-                      <div className="rating-lbl" style={{marginTop:7}}>👍 What worked:</div>
-                      <div className="fb-chips">{LIKES.map(o=><button key={o} className={"fbchip"+((dm.likes||[]).includes(o)?" li":"")} onClick={()=>fb(meal.id,"like",o)}>{o}</button>)}</div>
-                      <div className="rating-lbl" style={{marginTop:7}}>👎 What didn't:</div>
-                      <div className="fb-chips">{DISLIKES.map(o=><button key={o} className={"fbchip"+((dm.dislikes||[]).includes(o)?" di":"")} onClick={()=>fb(meal.id,"dislike",o)}>{o}</button>)}</div>
-                    </div>}
-                  </div>
-                  <div className="card-acts">
-                    {!dm.pinned&&<button className="cact" style={{borderColor:"var(--terra)",color:"var(--terra)"}} onClick={()=>swap(meal.id)}>🔄 Swap</button>}
-                    {dm.pinned&&<button className="cact" style={{color:"var(--gold)",borderColor:"var(--gold)"}} onClick={()=>pin(meal.id)}>📌 Unpin</button>}
-                    <button className="cact" onClick={()=>snooze(meal.id)}>😴 Snooze 2wk</button>
-                  </div>
-                </div>
-              </div>
-            );
-          })}</div>}
-          <div className="summary">
-            <div className="sum-title">📊 Weekly Estimate</div>
+
+          {week.length===0?<div className="empty"><div className="empty-ico">🔍</div><div className="empty-t">No meals match</div><p>Try relaxing your filters above</p></div>
+          :<div className="meal-grid">{week.map(meal=><MealCard key={meal.id} meal={meal}/>)}</div>}
+
+          {/* Summary */}
+          <div className="panel">
+            <div className="panel-title">📊 Weekly Summary</div>
             <div className="store-grid">
               <div className={"scard"+(fw?" win":"")}>{fw&&<div className="win-badge">Best Deal</div>}<div className="scard-name">Fry's Food & Drug</div><div className="scard-addr">7870 N Silverbell Rd</div><div className="scard-total">${frysT.toFixed(2)}</div><div className="scard-sub">{week.length} meals · {sv} servings</div></div>
               <div className={"scard"+(!fw?" win":"")}>{!fw&&<div className="win-badge">Best Deal</div>}<div className="scard-name">Safeway</div><div className="scard-addr">9100 N Silverbell Rd</div><div className="scard-total">${safT.toFixed(2)}</div></div>
             </div>
-            <p className="save-note">Shop at <strong>{fw?"Fry's":"Safeway"}</strong> to save ~<strong style={{color:"var(--terra)"}}>${sav.toFixed(2)}</strong></p>
-            <div style={{marginTop:16,paddingTop:16,borderTop:"1px solid var(--border)"}}>
-              <div className="sum-title" style={{fontSize:"1rem",marginBottom:6}}>🥦 Weekly Nutrition</div>
-              <div className="nut-grid">{[["🔥 Calories",Math.round(wn.cal),"kcal"],["💪 Protein",Math.round(wn.protein),"g"],["🌾 Carbs",Math.round(wn.carbs),"g"],["🥑 Fat",Math.round(wn.fat),"g"]].map(([lbl,val,unit])=><div key={lbl} className="nut-box"><div className="nut-val">{val.toLocaleString()}{unit}</div><div className="nut-lbl">{lbl}</div></div>)}</div>
+            <p style={{fontSize:".81rem",color:"var(--muted)"}}>Shop at <strong>{fw?"Fry's":"Safeway"}</strong> to save ~<strong style={{color:"var(--terra)"}}>${sav.toFixed(2)}</strong></p>
+            <div style={{marginTop:14,paddingTop:14,borderTop:"1px solid var(--border)"}}>
+              <div style={{fontWeight:700,fontSize:".88rem",color:"var(--green)",marginBottom:8}}>🥦 Weekly Nutrition</div>
+              <div className="nut-grid">{[["🔥 Cal",Math.round(wn.cal),"kcal"],["💪 Protein",Math.round(wn.protein),"g"],["🌾 Carbs",Math.round(wn.carbs),"g"],["🥑 Fat",Math.round(wn.fat),"g"]].map(([lbl,val,unit])=><div key={lbl} className="nb"><div className="nb-val">{val.toLocaleString()}{unit}</div><div className="nb-lbl">{lbl}</div></div>)}</div>
             </div>
           </div>
         </div>}
 
-        {tab==="taste"&&<div>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:10,marginBottom:20}}>
-            <div><h1 className="page-title">Taste Profile</h1><p className="page-sub">{rated.length} rated · {snoozed.length} snoozed</p></div>
-            <button className="export-btn" onClick={exportP}>⬇ Export JSON</button>
-          </div>
-          {snoozed.length>0&&<div style={{background:"#FFF8E1",border:"1px solid #F0C84A",borderRadius:"var(--r)",padding:"12px 16px",marginBottom:16}}>
-            <div style={{fontWeight:700,fontSize:"0.82rem",color:"#7D6008",marginBottom:6}}>😴 Snoozed ({snoozed.length})</div>
-            <div style={{display:"flex",flexWrap:"wrap",gap:6}}>{snoozed.map(m=><span key={m.id} style={{background:"white",border:"1px solid #F0C84A",borderRadius:10,padding:"3px 10px",fontSize:"0.75rem",fontWeight:600,color:"#7D6008",display:"flex",gap:8,alignItems:"center"}}>{m.name}<button onClick={()=>{const d2=db.map(x=>x.id===m.id?{...x,snoozedUntil:null}:x);setDb(d2);persist({db:d2});}} style={{background:"none",border:"none",cursor:"pointer",color:"var(--green)",fontWeight:700,fontSize:"0.75rem",padding:0}}>↩</button></span>)}</div>
-          </div>}
-          {rated.length===0?<div style={{textAlign:"center",padding:"60px 20px",color:"var(--muted)"}}><div style={{fontSize:"2.4rem",marginBottom:10}}>⭐</div><h3 style={{color:"var(--green)",marginBottom:6}}>No ratings yet</h3><p>Rate meals in "This Week"</p></div>
-          :<div className="taste-grid">{rated.map(m=>(
-            <div key={m.id} className="tcard">
-              <div className="tcard-name">{m.name}</div>
-              <div className="tcard-stars">{"★".repeat(Math.round(m.rating))}{"☆".repeat(5-Math.round(m.rating))} {m.rating.toFixed(1)} ({m.ratingCount}×)</div>
-              <div>{(m.likes||[]).map(t=><span key={t} className="t-like">👍 {t}</span>)}</div>
-              <div style={{marginTop:3}}>{(m.dislikes||[]).map(t=><span key={t} className="t-dis">👎 {t}</span>)}</div>
-            </div>
-          ))}</div>}
-        </div>}
-
-        {tab==="shop"&&<div>
-          <h1 className="page-title">Shopping List</h1>
-          <p className="page-sub">{week.length} meals · {sv} servings each</p>
-          {week.length===0?<div style={{textAlign:"center",padding:"60px 20px",color:"var(--muted)"}}><div style={{fontSize:"2.4rem"}}>🛒</div><h3 style={{color:"var(--green)",margin:"10px 0 6px"}}>No plan yet</h3><p>Go to "This Week" first</p></div>
-          :<div>
-            <div className="summary" style={{marginBottom:18}}>
-              <div className="sum-title">💰 Where to Shop</div>
-              <div className="store-grid">
-                <div className={"scard"+(fw?" win":"")}>{fw&&<div className="win-badge">Best Deal</div>}<div className="scard-name">Fry's Food & Drug</div><div className="scard-addr">7870 N Silverbell Rd</div><div className="scard-total">${frysT.toFixed(2)}</div></div>
-                <div className={"scard"+(!fw?" win":"")}>{!fw&&<div className="win-badge">Best Deal</div>}<div className="scard-name">Safeway</div><div className="scard-addr">9100 N Silverbell Rd</div><div className="scard-total">${safT.toFixed(2)}</div></div>
-              </div>
-              <p className="save-note">Save ~<strong style={{color:"var(--terra)"}}>${sav.toFixed(2)}</strong> at <strong>{fw?"Fry's":"Safeway"}</strong></p>
-            </div>
-            <div style={{background:"var(--surface)",border:"1.5px solid var(--border)",borderRadius:"var(--r)",padding:"14px 16px",marginBottom:14,boxShadow:"var(--cs)"}}>
-              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
-                <div style={{display:"flex",alignItems:"center",gap:10}}>
-                  <span style={{fontWeight:700,fontSize:"0.88rem",color:"var(--green)"}}>🛒 List</span>
-                  <span style={{background:ckCnt===allSK.length&&allSK.length>0?"var(--green)":"#EEE9E0",borderRadius:20,padding:"2px 10px",fontSize:"0.72rem",fontWeight:700,color:ckCnt===allSK.length&&allSK.length>0?"white":"var(--muted)"}}>{ckCnt}/{allSK.length} done</span>
-                  {ckCnt>0&&<button onClick={()=>{setCkShop({});persist({ckShop:{}}); }} style={{background:"none",border:"none",fontSize:"0.72rem",color:"var(--muted)",cursor:"pointer",textDecoration:"underline",padding:0}}>Clear</button>}
+        {/* ── WEEKLY PLANNER ── */}
+        {tab==="cal"&&<div className="fade-in">
+          <div className="ph"><h1>Weekly Planner</h1><p>Assign meals to days · tap a day to assign</p></div>
+          <div className="week-cal">
+            {DAYS.map((day,i)=>{
+              const mealId=calAssign[i];const meal=db.find(m=>m.id===mealId);
+              return(
+                <div key={day} className={"wday"+(mealId?" has":"")} onClick={()=>{const ids=week.map(m=>m.id);if(!ids.length)return;const cur=ids.indexOf(mealId);const next=ids[(cur+1)%ids.length];assignDay(i,next);}}>
+                  <div className="wday-lbl">{day}</div>
+                  {meal?<div className="wday-meal">{meal.name}</div>:<div className="wday-empty">tap to add</div>}
                 </div>
-                <button onClick={()=>{const name=prompt("Item name:");if(!name||!name.trim())return;const qty=prompt("Quantity:")||"1";const note=prompt("Note (optional):")||"";const zone=gz(name.toLowerCase().trim());setExtras(prev=>{const n=[...prev,{id:Date.now(),name:name.trim(),qty,note,zone}];persist({extras:n});return n;});}} style={{background:"var(--terra)",color:"white",border:"none",borderRadius:16,padding:"6px 16px",fontWeight:700,fontSize:"0.78rem",cursor:"pointer"}}>+ Add Item</button>
+              );
+            })}
+          </div>
+          <div style={{fontSize:".76rem",color:"var(--muted)",marginBottom:16,textAlign:"center"}}>Tap a day to cycle through this week's meals</div>
+          {/* Pantry tracker */}
+          <div className="panel">
+            <div className="panel-title">🥫 Pantry Tracker</div>
+            <p style={{fontSize:".78rem",color:"var(--muted)",marginBottom:10}}>Items you already have — they'll be highlighted in your shopping list and meal cards.</p>
+            <div style={{display:"flex",gap:8,marginBottom:10}}>
+              <input className="fi" style={{flex:1}} placeholder="e.g. olive oil, garlic, rice..." value={pantryIn} onChange={e=>setPantryIn(e.target.value)} onKeyDown={e=>e.key==="Enter"&&addPantry()}/>
+              <button className="add-btn" onClick={addPantry}>Add</button>
+            </div>
+            <div style={{display:"flex",flexWrap:"wrap"}}>{pantry.map(item=><span key={item} className="pantry-chip">{item}<button onClick={()=>rmPantry(item)}>✕</button></span>)}</div>
+            {pantry.length===0&&<p style={{fontSize:".76rem",color:"var(--muted)"}}>No pantry items yet. Add staples you always have on hand.</p>}
+          </div>
+          {/* AI pantry suggestions */}
+          {pantry.length>0&&<div className="panel">
+            <div className="panel-title">💡 Cook From Pantry</div>
+            <p style={{fontSize:".78rem",color:"var(--muted)",marginBottom:10}}>Meals this week that use your pantry items:</p>
+            {week.map(meal=>{const matches=meal.ing.filter(([i])=>pantry.map(p=>p.toLowerCase()).includes(i.toLowerCase()));if(!matches.length)return null;return<div key={meal.id} style={{display:"flex",justifyContent:"space-between",padding:"6px 0",borderBottom:"1px solid var(--border)",fontSize:".8rem"}}><span style={{fontWeight:600}}>{meal.name}</span><span style={{color:"var(--green)",fontWeight:700}}>✓ {matches.map(([i])=>i).join(", ")}</span></div>;})}
+          </div>}
+        </div>}
+
+        {/* ── SHOPPING ── */}
+        {tab==="shop"&&<div className="fade-in">
+          <div className="ph"><h1>Shopping List</h1><p>{week.length} meals · {sv} servings · {ckCnt}/{allSK.length} done</p></div>
+          {week.length===0?<div className="empty"><div className="empty-ico">🛒</div><div className="empty-t">No plan yet</div><p>Go to Meals first</p></div>
+          :<div>
+            <div className="panel" style={{marginBottom:14}}>
+              <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",flexWrap:"wrap",gap:8}}>
+                <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  <span style={{fontWeight:700,fontSize:".86rem",color:"var(--green)"}}>🛒 {ckCnt}/{allSK.length} done</span>
+                  {ckCnt>0&&<button onClick={()=>{setCkShop({});save({ckShop:{}}); }} style={{background:"none",border:"none",fontSize:".72rem",color:"var(--muted)",cursor:"pointer",textDecoration:"underline",padding:0}}>Clear</button>}
+                </div>
+                <button onClick={()=>{const name=prompt("Item name:");if(!name||!name.trim())return;const qty=prompt("Quantity:")||"1";const note=prompt("Note (optional):")||"";const zone=gz(name.toLowerCase().trim());setExtras(prev=>{const n=[...prev,{id:Date.now(),name:name.trim(),qty,note,zone}];save({extras:n});return n;});}} style={{background:"var(--terra)",color:"#fff",border:"none",borderRadius:16,padding:"6px 16px",fontWeight:700,fontSize:".76rem",cursor:"pointer"}}>+ Add Item</button>
               </div>
             </div>
-            <div style={{background:"var(--surface)",border:"1px solid var(--border)",borderRadius:"var(--r)",padding:"12px 16px",marginBottom:14,fontSize:"0.76rem"}}>
-              <div style={{fontWeight:700,color:"var(--green)",marginBottom:6}}>🗺 Fry's Silverbell & Cortaro — Shop right → left</div>
-              <div style={{display:"flex",flexWrap:"wrap",gap:4}}>{zShow.map((z,i)=><span key={z.z} style={{background:z.c,borderRadius:10,padding:"2px 9px",fontWeight:700,fontSize:"0.68rem"}}>{i+1}. {z.z}</span>)}</div>
+            <div className="panel" style={{marginBottom:14,padding:"10px 14px"}}>
+              <div style={{fontWeight:700,color:"var(--green)",marginBottom:5,fontSize:".78rem"}}>🗺 Fry's Silverbell & Cortaro — Shop right → left</div>
+              <div style={{display:"flex",flexWrap:"wrap",gap:3}}>{zShow.map((z,i)=><span key={z.z} style={{background:z.c,borderRadius:8,padding:"2px 8px",fontWeight:700,fontSize:".63rem"}}>{i+1}. {z.z}</span>)}</div>
             </div>
             {zShow.map(z=>{
               const items=grpd[z.o]||[];
               const zCk=items.filter(({item,isExtra,eid})=>ckShop[isExtra?'ex_'+eid:item]).length;
               return(
-                <div key={z.z} style={{marginBottom:12,border:"1.5px solid",borderColor:z.c,borderRadius:"var(--r)",overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,0.05)"}}>
-                  <div style={{background:z.c,padding:"10px 14px",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-                    <span style={{fontWeight:700,fontSize:"0.86rem"}}>{z.z}</span>
-                    <span style={{fontSize:"0.78rem",fontWeight:700,color:"var(--green)"}}>{zCk}/{items.length}</span>
+                <div key={z.z} style={{marginBottom:10,border:"1.5px solid",borderColor:z.c,borderRadius:"var(--r)",overflow:"hidden",boxShadow:"0 1px 4px rgba(0,0,0,.05)"}}>
+                  <div className="zone-hdr" style={{background:z.c}}>
+                    <span style={{fontWeight:700,fontSize:".82rem"}}>{z.z}</span>
+                    <span style={{fontSize:".76rem",fontWeight:700,color:"var(--green)"}}>{zCk}/{items.length}</span>
                   </div>
                   <div className="ing-table" style={{borderRadius:0,border:"none",boxShadow:"none"}}>
                     <table style={{width:"100%",borderCollapse:"collapse"}}>
-                      <thead className="ing-thead"><tr><th>Item</th><th>Qty</th><th>Fry's</th><th>Safeway</th><th>Best</th></tr></thead>
-                      <tbody className="ing-tbody">
+                      <thead className="ith"><tr><th>Item</th><th>Qty</th><th>Fry's</th><th>Best</th></tr></thead>
+                      <tbody className="itb">
                         {items.map(({item,qty,isExtra,eid,note})=>{
-                          const key=isExtra?'ex_'+eid:item;
-                          const done=!!ckShop[key];
-                          const fp=isExtra?null:gp(item,true,qty);
-                          const sp=isExtra?null:gp(item,false,qty);
+                          const key=isExtra?'ex_'+eid:item,done=!!ckShop[key];
+                          const fp=isExtra?null:gp(item,true,qty);const sp=isExtra?null:gp(item,false,qty);
                           const q=typeof qty==="number"?qty:parseFloat(qty)||1;
+                          const inP=!isExtra&&pantry.map(p=>p.toLowerCase()).includes(item.toLowerCase());
                           return(
-                            <tr key={key} style={{opacity:done?0.45:1,background:done?"#F0F4F0":undefined}}>
+                            <tr key={key} style={{opacity:done?.4:1,background:done?"#F0F4F0":inP?"#F0FBF3":undefined}}>
                               <td style={{fontWeight:600}}>
-                                <div style={{display:"flex",alignItems:"center",gap:8}}>
-                                  <input type="checkbox" checked={done} onChange={()=>tkShop(key)} style={{accentColor:"var(--green)",width:16,height:16,cursor:"pointer",flexShrink:0}}/>
-                                  <span style={{textDecoration:done?"line-through":"none",flex:1}}>{isExtra&&"➕ "}{item}{note&&<span style={{marginLeft:5,fontSize:"0.68rem",color:"var(--muted)",fontStyle:"italic"}}>{note}</span>}</span>
-                                  {isExtra&&<button onClick={()=>{setExtras(prev=>{const n=prev.filter(e=>e.id!==eid);persist({extras:n});return n;});}} style={{background:"none",border:"none",color:"#C0392B",cursor:"pointer",fontSize:"0.8rem"}}>✕</button>}
+                                <div style={{display:"flex",alignItems:"center",gap:7}}>
+                                  <input type="checkbox" checked={done} onChange={()=>tkShop(key)} style={{accentColor:"var(--green)",width:16,height:16,flexShrink:0}}/>
+                                  <span style={{textDecoration:done?"line-through":"none",flex:1,fontSize:".78rem"}}>{isExtra&&"➕ "}{inP&&"✓ "}{item}{note&&<span style={{marginLeft:4,fontSize:".66rem",color:"var(--muted)",fontStyle:"italic"}}>{note}</span>}</span>
+                                  {isExtra&&<button onClick={()=>{setExtras(prev=>{const n=prev.filter(e=>e.id!==eid);save({extras:n});return n;});}} style={{background:"none",border:"none",color:"#C0392B",fontSize:".78rem",cursor:"pointer"}}>✕</button>}
                                 </div>
                               </td>
-                              <td style={{fontWeight:700,color:done?"var(--muted)":"var(--green)"}}>{q%1===0?q:q.toFixed(2)}{!isExtra&&<span style={{fontSize:"0.65rem",color:"var(--muted)",fontWeight:400,marginLeft:2}}>u</span>}</td>
+                              <td style={{fontWeight:700,color:done?"var(--muted)":"var(--green)",fontSize:".78rem"}}>{isExtra?(q%1===0?q:q.toFixed(1)):fq(item,q)}</td>
                               {!isExtra?<>
-                                <td style={{color:done?"var(--muted)":undefined}}>${fp.toFixed(2)}</td>
-                                <td style={{color:done?"var(--muted)":undefined}}>${sp.toFixed(2)}</td>
-                                <td className="ing-best" style={{color:done?"var(--muted)":undefined}}>{fp<=sp?"Fry's":"Safeway"} (${Math.min(fp,sp).toFixed(2)})</td>
-                              </>:<td colSpan={3} style={{color:"var(--muted)",fontSize:"0.78rem"}}>manual add</td>}
+                                <td style={{color:done?"var(--muted)":undefined,fontSize:".78rem"}}>${fp.toFixed(2)}</td>
+                                <td className="ib" style={{color:done?"var(--muted)":undefined,fontSize:".76rem"}}>{fp<=sp?"Fry's":"Safeway"}<br/><span style={{fontSize:".68rem"}}>(${Math.min(fp,sp).toFixed(2)})</span></td>
+                              </>:<td colSpan={2} style={{color:"var(--muted)",fontSize:".74rem"}}>manual</td>}
                             </tr>
                           );
                         })}
@@ -728,38 +816,70 @@ function App(){
           </div>}
         </div>}
 
-        {tab==="library"&&<div>
-          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:10,marginBottom:20}}>
-            <div><h1 className="page-title">Meal Library</h1><p className="page-sub">{db.length} total · {db.filter(m=>m.custom).length} custom</p></div>
+        {/* ── TASTE ── */}
+        {tab==="taste"&&<div className="fade-in">
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:10,marginBottom:16}}>
+            <div className="ph" style={{marginBottom:0}}><h1>Taste Profile</h1><p>{rated.length} rated · {snoozed.length} snoozed</p></div>
+            <button className="exp-btn" onClick={exportP}>⬇ Export JSON</button>
+          </div>
+          {snoozed.length>0&&<div className="snz-banner">
+            <div style={{fontWeight:700,fontSize:".8rem",color:"#7D6008",marginBottom:6}}>😴 Snoozed ({snoozed.length}) — out of rotation</div>
+            <div style={{display:"flex",flexWrap:"wrap",gap:5}}>{snoozed.map(m=><span key={m.id} style={{background:"#fff",border:"1px solid #F0C84A",borderRadius:10,padding:"3px 10px",fontSize:".73rem",fontWeight:600,color:"#7D6008",display:"flex",gap:7,alignItems:"center"}}>{m.name}<button onClick={()=>{const d2=db.map(x=>x.id===m.id?{...x,snoozedUntil:null}:x);setDb(d2);save({db:d2});}} style={{background:"none",border:"none",cursor:"pointer",color:"var(--green)",fontWeight:700,fontSize:".73rem",padding:0}}>↩</button></span>)}</div>
+          </div>}
+          {rated.length===0?<div className="empty"><div className="empty-ico">⭐</div><div className="empty-t">No ratings yet</div><p>Rate meals to build your profile</p></div>
+          :<div className="taste-grid">{rated.map(m=>(
+            <div key={m.id} className="tcard">
+              <div className="tc-name">{m.name}</div>
+              <div className="tc-stars">{"★".repeat(Math.round(m.rating))}{"☆".repeat(5-Math.round(m.rating))} {m.rating.toFixed(1)} ({m.ratingCount}×)</div>
+              <div style={{fontSize:".72rem",color:"var(--muted)",marginBottom:4}}>{m.protein}g protein · {m.cal} cal · {m.time}min</div>
+              {m.note&&<div style={{fontSize:".72rem",color:"#7D6008",background:"#FFF8E1",borderRadius:7,padding:"3px 7px",marginBottom:4}}>📝 {m.note}</div>}
+              <div>{(m.likes||[]).map(t=><span key={t} className="tl">👍 {t}</span>)}</div>
+              <div style={{marginTop:3}}>{(m.dislikes||[]).map(t=><span key={t} className="td">👎 {t}</span>)}</div>
+            </div>
+          ))}</div>}
+          {rated.length>0&&<div className="panel" style={{marginTop:16}}>
+            <div className="panel-title" style={{fontSize:".96rem"}}>📋 Profile Summary</div>
+            <div style={{fontSize:".8rem",color:"var(--muted)",lineHeight:1.7}}>
+              <p><strong>Most liked:</strong> {[...new Set(rated.flatMap(m=>m.likes||[]))].slice(0,4).join(", ")||"None yet"}</p>
+              <p><strong>Most disliked:</strong> {[...new Set(rated.flatMap(m=>m.dislikes||[]))].slice(0,4).join(", ")||"None yet"}</p>
+              <p><strong>Avg rating:</strong> {(rated.reduce((a,m)=>a+m.rating,0)/rated.length).toFixed(1)}★ across {rated.length} meals</p>
+              <p style={{marginTop:8,fontSize:".74rem",background:"#F4FAF6",borderRadius:8,padding:"8px 10px"}}>💡 Export your profile and bring it back to Claude to expand your recipe library based on what your family loves.</p>
+            </div>
+          </div>}
+        </div>}
+
+        {/* ── LIBRARY ── */}
+        {tab==="library"&&<div className="fade-in">
+          <div style={{display:"flex",alignItems:"flex-start",justifyContent:"space-between",flexWrap:"wrap",gap:10,marginBottom:16}}>
+            <div className="ph" style={{marginBottom:0}}><h1>Meal Library</h1><p>{db.length} total · {db.filter(m=>m.custom).length} custom</p></div>
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-              <button className="ai-recipe-btn" onClick={()=>setShowAiR(true)}>🤖 Describe a Recipe</button>
-              <button className="add-meal-btn" onClick={()=>setShowAdd(true)}>＋ Add Manually</button>
+              <button className="ai-rec-btn" onClick={()=>setShowAiR(true)}>🤖 Describe Recipe</button>
+              <button className="add-btn" onClick={()=>setShowAdd(true)}>＋ Add</button>
             </div>
           </div>
           <div className="meal-grid">{db.map(meal=>{
             const dm=db.find(m=>m.id===meal.id)||meal;
             const inW=week.find(m=>m.id===meal.id);
+            const isSn=dm.snoozedUntil&&Date.now()<dm.snoozedUntil;
             return(
-              <div key={meal.id} className={"mcard"+(dm.pinned?" pinned":"")}>
+              <div key={meal.id} className={"mcard"+(dm.pinned?" pinned":"")} style={{opacity:isSn?.5:1}}>
                 <div className="mcard-top">
-                  <div className="mcard-top-row">
-                    <div className="mcard-badge">⏱ {meal.time}m</div>
-                    <div style={{display:"flex",gap:4,alignItems:"center"}}>
-                      {inW&&<span style={{fontSize:"0.68rem",background:"rgba(255,255,255,0.25)",borderRadius:8,padding:"2px 7px",fontWeight:700}}>this week</span>}
-                      <button className="icon-btn" onClick={()=>pin(meal.id)}>{dm.pinned?"📌":"🖇️"}</button>
-                    </div>
+                  <button className="mcard-pin" onClick={()=>pin(meal.id)}>{dm.pinned?"📌":"🖇️"}</button>
+                  <div className="mcard-badges">
+                    <span className="mbadge">⏱ {meal.time}m</span>
+                    <span className="mbadge">{meal.cat}</span>
+                    {inW&&<span className="mbadge" style={{background:"rgba(255,255,255,.3)"}}>this week</span>}
+                    {meal.tags&&meal.tags.includes("toddler-friendly")&&<span className="mbadge toddler">👶</span>}
+                    {isSn&&<span className="mbadge">😴 snoozed</span>}
                   </div>
-                  <div className="mcard-cat">{meal.cat}</div>
                   <div className="mcard-name">{meal.name}</div>
-                  <div className="mcard-meta">
-                    <span>{meal.protein}g prot · {meal.cal} cal · {meal.time}min</span>
-                    {meal.tags&&meal.tags.includes("toddler-friendly")&&<span style={{background:"rgba(255,220,60,0.35)",border:"1px solid rgba(255,200,0,0.5)",borderRadius:20,padding:"1px 7px",fontSize:"0.66rem",fontWeight:700}}>👶 toddler ok</span>}
-                  </div>
-                  <div className="mcard-tags">{meal.tags&&meal.tags.filter(t=>t!=="sweet-asian"&&t!=="toddler-friendly").slice(0,3).map(t=><span key={t} className="mtag">{t}</span>)}</div>
+                  <div className="mcard-meta"><span>{meal.protein}g prot</span><span>{meal.cal} cal</span></div>
                 </div>
                 <div className="mcard-body">
                   <p className="mcard-steps">{meal.steps}</p>
-                  {dm.rating>0&&<div style={{color:"var(--gold2)",fontSize:"0.9rem",fontWeight:700}}>{"★".repeat(Math.round(dm.rating))}{"☆".repeat(5-Math.round(dm.rating))} {dm.rating.toFixed(1)}</div>}
+                  {dm.rating>0&&<div style={{color:"var(--gold2)",fontSize:".88rem",fontWeight:700}}>{"★".repeat(Math.round(dm.rating))}{"☆".repeat(5-Math.round(dm.rating))} {dm.rating.toFixed(1)}</div>}
+                  {dm.note&&<div style={{fontSize:".74rem",color:"#7D6008",background:"#FFF8E1",borderRadius:7,padding:"4px 8px"}}>📝 {dm.note}</div>}
+                  {isSn&&<button onClick={()=>{const d2=db.map(x=>x.id===meal.id?{...x,snoozedUntil:null}:x);setDb(d2);save({db:d2});}} style={{background:"none",border:"1px solid var(--green)",color:"var(--green)",borderRadius:8,padding:"4px 10px",fontSize:".74rem",fontWeight:700,cursor:"pointer"}}>↩ Restore</button>}
                 </div>
               </div>
             );
@@ -767,37 +887,53 @@ function App(){
         </div>}
       </div>
 
-      {shareUrl&&<div className="modal-overlay" onClick={e=>e.target.className==="modal-overlay"&&setShareUrl(null)}>
-        <div className="modal" style={{maxWidth:500}}>
+      {/* ── BOTTOM NAV (mobile) ── */}
+      <div className="bot-nav">
+        <div className="bot-tabs">{TABS.map(([k,ico,lbl])=>(
+          <button key={k} className={"btab"+(tab===k?" on":"")} onClick={()=>setTab(k)}>
+            <span className="bico">{ico}</span>
+            <span>{lbl}</span>
+          </button>
+        ))}</div>
+      </div>
+
+      {/* ── SHARE MODAL ── */}
+      {shareUrl&&<div className="ov" onClick={e=>e.target.className==="ov"&&setShareUrl(null)}>
+        <div className="modal">
+          <div className="modal-drag"/>
           <div className="modal-title">🔗 Share This Week</div>
-          <p style={{fontSize:"0.83rem",color:"var(--muted)",lineHeight:1.6,marginBottom:14}}>Send this to anyone — they'll see all {week.length} meals + shopping list by Fry's zone. No login needed.</p>
-          <div style={{background:"#F4FAF6",border:"1px solid #C5DECA",borderRadius:9,padding:"10px 12px",fontSize:"0.75rem",wordBreak:"break-all",color:"#1E4D2B",marginBottom:12,lineHeight:1.5}}>{shareUrl}</div>
+          <p style={{fontSize:".81rem",color:"var(--muted)",lineHeight:1.6,marginBottom:12}}>Send to anyone — they'll get all {week.length} meals + shopping list organized by Fry's zone. No login needed.</p>
+          <div style={{background:"#F4FAF6",border:"1px solid #C5DECA",borderRadius:8,padding:"9px 11px",fontSize:".72rem",wordBreak:"break-all",color:"#1E4D2B",marginBottom:12,lineHeight:1.5}}>{shareUrl}</div>
           <div style={{display:"flex",gap:8}}>
-            <button className="btn-primary" onClick={copyUrl} style={{background:copied?"#2D6A3F":"var(--green)"}}>{copied?"✓ Copied!":"📋 Copy Link"}</button>
-            <button className="btn-cancel" onClick={()=>setShareUrl(null)}>Close</button>
+            <button className="btn-p" onClick={()=>{navigator.clipboard.writeText(shareUrl).then(()=>{setCopied(true);setTimeout(()=>setCopied(false),2500);});}} style={{background:copied?"#2D6A3F":"var(--green)"}}>{copied?"✓ Copied!":"📋 Copy Link"}</button>
+            <button className="btn-c" onClick={()=>setShareUrl(null)}>Close</button>
           </div>
         </div>
       </div>}
 
-      {showAdd&&<div className="modal-overlay" onClick={e=>e.target.className==="modal-overlay"&&setShowAdd(false)}>
+      {/* ── ADD MEAL MODAL ── */}
+      {showAdd&&<div className="ov" onClick={e=>e.target.className==="ov"&&setShowAdd(false)}>
         <div className="modal">
+          <div className="modal-drag"/>
           <div className="modal-title">＋ Add Meal Manually</div>
-          <div className="form-row"><label className="form-lbl">Meal Name *</label><input className="form-in" value={addF.name} onChange={e=>setAddF(f=>({...f,name:e.target.value}))} placeholder="e.g. Mom's Chicken Soup"/></div>
-          <div className="form-row"><label className="form-lbl">Category</label><select className="form-in" value={addF.cat} onChange={e=>setAddF(f=>({...f,cat:e.target.value}))}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
-          <div className="form-row form-row-2"><div><label className="form-lbl">Cook Time (min)</label><input className="form-in" type="number" value={addF.time} onChange={e=>setAddF(f=>({...f,time:e.target.value}))}/></div><div><label className="form-lbl">Protein (g/4 servings)</label><input className="form-in" type="number" value={addF.protein} onChange={e=>setAddF(f=>({...f,protein:e.target.value}))}/></div></div>
-          <div className="form-row" style={{display:"grid",gridTemplateColumns:"1fr 1fr 1fr",gap:10}}><div><label className="form-lbl">Calories</label><input className="form-in" type="number" value={addF.cal} onChange={e=>setAddF(f=>({...f,cal:e.target.value}))}/></div><div><label className="form-lbl">Carbs (g)</label><input className="form-in" type="number" value={addF.carbs} onChange={e=>setAddF(f=>({...f,carbs:e.target.value}))}/></div><div><label className="form-lbl">Fat (g)</label><input className="form-in" type="number" value={addF.fat} onChange={e=>setAddF(f=>({...f,fat:e.target.value}))}/></div></div>
-          <div className="form-row"><label className="form-lbl">Ingredients (one per line: "item, qty")</label><textarea className="form-in form-textarea" placeholder={"chicken breast, 1.5\nrice, 0.4\ngarlic, 1"} value={addF.ing} onChange={e=>setAddF(f=>({...f,ing:e.target.value}))}/></div>
-          <div className="form-row"><label className="form-lbl">Instructions</label><textarea className="form-in form-textarea" value={addF.steps} onChange={e=>setAddF(f=>({...f,steps:e.target.value}))} placeholder="How to make it..."/></div>
-          <div className="modal-acts"><button className="btn-cancel" onClick={()=>setShowAdd(false)}>Cancel</button><button className="btn-primary" onClick={addMeal} disabled={!addF.name.trim()}>Add to Library</button></div>
+          <div className="form-row"><label className="fl">Meal Name *</label><input className="fi" value={addF.name} onChange={e=>setAddF(f=>({...f,name:e.target.value}))} placeholder="e.g. Mom's Chicken Soup"/></div>
+          <div className="form-row"><label className="fl">Category</label><select className="fi" value={addF.cat} onChange={e=>setAddF(f=>({...f,cat:e.target.value}))}>{CATS.map(c=><option key={c}>{c}</option>)}</select></div>
+          <div className="form-row g2"><div><label className="fl">Cook Time (min)</label><input className="fi" type="number" value={addF.time} onChange={e=>setAddF(f=>({...f,time:e.target.value}))}/></div><div><label className="fl">Protein (g/4 srv)</label><input className="fi" type="number" value={addF.protein} onChange={e=>setAddF(f=>({...f,protein:e.target.value}))}/></div></div>
+          <div className="form-row g3"><div><label className="fl">Calories</label><input className="fi" type="number" value={addF.cal} onChange={e=>setAddF(f=>({...f,cal:e.target.value}))}/></div><div><label className="fl">Carbs (g)</label><input className="fi" type="number" value={addF.carbs} onChange={e=>setAddF(f=>({...f,carbs:e.target.value}))}/></div><div><label className="fl">Fat (g)</label><input className="fi" type="number" value={addF.fat} onChange={e=>setAddF(f=>({...f,fat:e.target.value}))}/></div></div>
+          <div className="form-row"><label className="fl">Ingredients (one per line: "item, qty")</label><textarea className="fi fta" placeholder={"chicken breast, 1.5\nrice, 0.4\ngarlic, 1"} value={addF.ing} onChange={e=>setAddF(f=>({...f,ing:e.target.value}))}/></div>
+          <div className="form-row"><label className="fl">Instructions</label><textarea className="fi fta" value={addF.steps} onChange={e=>setAddF(f=>({...f,steps:e.target.value}))} placeholder="How to make it..."/></div>
+          <div className="macts"><button className="btn-c" onClick={()=>setShowAdd(false)}>Cancel</button><button className="btn-p" onClick={addMeal} disabled={!addF.name.trim()}>Add to Library</button></div>
         </div>
       </div>}
 
-      {showAiR&&<div className="modal-overlay" onClick={e=>e.target.className==="modal-overlay"&&setShowAiR(false)}>
+      {/* ── AI RECIPE MODAL ── */}
+      {showAiR&&<div className="ov" onClick={e=>e.target.className==="ov"&&setShowAiR(false)}>
         <div className="modal">
+          <div className="modal-drag"/>
           <div className="modal-title">🤖 Describe a Recipe</div>
-          <p style={{fontSize:"0.83rem",color:"var(--muted)",marginBottom:14,lineHeight:1.6}}>Describe any meal and I'll convert it into a full recipe card automatically.</p>
-          <textarea className="form-in form-textarea" style={{minHeight:100}} placeholder={'e.g. "My mom\'s green chile chicken casserole with cream of mushroom, green chiles, shredded cheese and crushed chips, bakes for 30 min"'} value={aiRI} onChange={e=>setAiRI(e.target.value)}/>
-          <div className="modal-acts"><button className="btn-cancel" onClick={()=>setShowAiR(false)}>Cancel</button><button className="btn-primary" onClick={addAiR} disabled={aiRL||!aiRI.trim()}>{aiRL?"🤖 Converting...":"Add to Library"}</button></div>
+          <p style={{fontSize:".81rem",color:"var(--muted)",marginBottom:12,lineHeight:1.6}}>Describe any meal in plain English and I'll convert it into a full recipe card.</p>
+          <textarea className="fi fta" style={{minHeight:90}} placeholder={'e.g. "My mom\'s green chile chicken casserole with cream of mushroom, green chiles, shredded cheese and crushed chips, bakes for 30 min"'} value={aiRI} onChange={e=>setAiRI(e.target.value)}/>
+          <div className="macts"><button className="btn-c" onClick={()=>setShowAiR(false)}>Cancel</button><button className="btn-p" onClick={addAiR} disabled={aiRL||!aiRI.trim()}>{aiRL?"🤖 Converting...":"Add to Library"}</button></div>
         </div>
       </div>}
     </div>
