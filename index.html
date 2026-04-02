@@ -225,7 +225,69 @@ const ZONES=[
 const IZ={"broccoli":2,"spinach":2,"kale":2,"bell peppers":2,"onion":2,"red onion":2,"garlic":2,"tomato":2,"cherry tomatoes":2,"cucumber":2,"zucchini":2,"mushrooms":2,"sweet potato":2,"russet potato":2,"avocado":2,"lime":2,"lemon":2,"celery":2,"carrots":2,"corn":2,"asparagus":2,"green beans":2,"cabbage":2,"bok choy":2,"jalapeño":2,"cauliflower":2,"green onions":2,"cilantro":2,"basil":2,"parsley":2,"ginger":2,"bread":3,"pita bread":3,"naan":3,"flatbread":3,"burger buns":3,"panko breadcrumbs":3,"chicken breast":4,"chicken thighs":4,"ground beef 90/10":4,"ground turkey":4,"ground pork":4,"pork tenderloin":4,"pork chops":4,"beef sirloin":4,"beef stew meat":4,"flank steak":4,"lamb chops":4,"Italian sausage":4,"chorizo":4,"bacon":4,"pasta":5,"egg noodles":5,"rice":5,"quinoa":5,"tortillas":6,"corn tortillas":6,"taco shells":6,"enchilada sauce":6,"salsa verde":6,"canned green chiles":6,"taco seasoning":6,"rotel":6,"oyster sauce":6,"sesame oil":6,"soy sauce":6,"coconut milk":6,"canned tomatoes":7,"tomato paste":7,"chicken broth":7,"beef broth":7,"salsa":7,"olive oil":8,"hot sauce":8,"sriracha":8,"worcestershire":8,"dijon mustard":8,"ranch dressing":8,"hummus":8,"balsamic vinegar":8,"apple cider vinegar":8,"tahini":8,"peanut butter":8,"kalamata olives":8,"sun-dried tomatoes":8,"pine nuts":8,"black beans":9,"kidney beans":9,"pinto beans":9,"chickpeas":9,"lentils":9,"white beans":9,"smoked paprika":10,"frozen peas":11,"frozen corn":11,"frozen spinach":11,"edamame":11,"eggs":12,"milk":12,"butter":12,"heavy cream":12,"sour cream":12,"cream cheese":12,"greek yogurt":12,"cottage cheese":12,"shredded cheese":12,"parmesan":12,"feta cheese":12,"mozzarella":12,"cheddar cheese":12,"pepper jack cheese":12,"ricotta":12};
 const gz=item=>IZ[item]||14;
 
-const MEALS=[
+// Human-readable quantity formatter
+const UNIT_MAP={
+  // Produce — count or bunch
+  "garlic":"clove","lemon":"","lime":"","onion":"","red onion":"","avocado":"",
+  "tomato":"","bell peppers":"","jalapeño":"","corn":"ear","cucumber":"",
+  "zucchini":"","cauliflower":"head","cabbage":"head","bok choy":"head",
+  // Produce — weight
+  "broccoli":"lb","spinach":"oz","kale":"oz","carrots":"lb","celery":"stalk",
+  "sweet potato":"lb","russet potato":"lb","asparagus":"lb","green beans":"lb",
+  "mushrooms":"oz","cherry tomatoes":"oz","green onions":"bunch","cilantro":"bunch",
+  "basil":"oz","parsley":"bunch","ginger":"inch",
+  // Meat — lb
+  "chicken breast":"lb","chicken thighs":"lb","ground beef 90/10":"lb",
+  "ground turkey":"lb","ground pork":"lb","pork tenderloin":"lb","pork chops":"lb",
+  "beef sirloin":"lb","beef stew meat":"lb","flank steak":"lb","lamb chops":"lb",
+  "Italian sausage":"lb","chorizo":"lb","bacon":"lb",
+  // Dairy
+  "eggs":"","butter":"tbsp","heavy cream":"cup","sour cream":"cup",
+  "cream cheese":"oz","greek yogurt":"cup","shredded cheese":"cup",
+  "parmesan":"cup","feta cheese":"oz","mozzarella":"oz","cheddar cheese":"cup",
+  "pepper jack cheese":"cup","ricotta":"cup","milk":"cup","cottage cheese":"cup",
+  // Pantry — cup
+  "rice":"cup","quinoa":"cup","pasta":"lb","egg noodles":"oz","lentils":"cup",
+  "black beans":"can","kidney beans":"can","pinto beans":"can","chickpeas":"can",
+  "white beans":"can","canned tomatoes":"can","chicken broth":"cup","beef broth":"cup",
+  "coconut milk":"can","tomato paste":"oz","salsa":"cup","salsa verde":"cup",
+  "enchilada sauce":"cup","canned green chiles":"can","rotel":"can",
+  // Pantry — tbsp/tsp
+  "olive oil":"tbsp","sesame oil":"tbsp","soy sauce":"tbsp","oyster sauce":"tbsp",
+  "hot sauce":"tbsp","sriracha":"tbsp","worcestershire":"tbsp","ranch dressing":"tbsp",
+  "dijon mustard":"tbsp","balsamic vinegar":"tbsp","apple cider vinegar":"tbsp",
+  "peanut butter":"tbsp","tahini":"tbsp","hummus":"cup",
+  // Misc
+  "tortillas":"","corn tortillas":"","taco shells":"","burger buns":"",
+  "bread":"slice","panko breadcrumbs":"cup","taco seasoning":"oz",
+  "smoked paprika":"tsp","frozen peas":"cup","frozen corn":"cup",
+  "frozen spinach":"oz","edamame":"cup","sun-dried tomatoes":"oz",
+  "kalamata olives":"oz","pine nuts":"oz","naan":"","pita bread":"",
+  "flatbread":"","tofu extra firm":"oz",
+};
+
+// Scale multipliers per unit type to give realistic amounts
+const UNIT_SCALE={
+  "lb":1,"oz":16,"cup":4,"tbsp":16,"tsp":48,"clove":8,
+  "can":1,"bunch":1,"stalk":4,"ear":1,"inch":3,"head":1,"slice":4,""  :1
+};
+
+function fmtQty(item,rawQty){
+  const unit=UNIT_MAP[item];
+  if(unit===undefined){
+    // fallback: just show number
+    return rawQty%1===0?rawQty+"":rawQty.toFixed(1)+"";
+  }
+  const scale=UNIT_SCALE[unit]||1;
+  const scaled=rawQty*scale;
+  // Round to sensible numbers
+  const nice=scaled<1?Math.round(scaled*4)/4:scaled<=4?Math.round(scaled*2)/2:Math.round(scaled);
+  const qty=nice%1===0?nice:nice.toFixed(nice<2?2:1);
+  if(unit==="")return qty+" ";
+  // pluralize simple units
+  const pl=nice!==1&&["oz","lb","cup","clove","stalk","ear","inch","slice"].includes(unit)?unit+"s":unit;
+  return qty+" "+pl+" ";
+}
   {id:"c01",name:"Sheet Pan Lemon Herb Chicken & Broccoli",time:25,protein:48,cal:420,carbs:12,fat:14,cat:"Chicken",tags:["low-carb","one-pan","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["broccoli",1.5],["olive oil",0.15],["garlic",1],["lemon",2]],steps:"Toss chicken & broccoli in olive oil, garlic, salt, pepper, lemon zest. Roast 425°F for 22 min."},
   {id:"c02",name:"Chicken Tikka Masala",time:30,protein:44,cal:520,carbs:38,fat:18,cat:"Chicken",tags:["indian","comfort","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["canned tomatoes",1],["coconut milk",1],["onion",1],["garlic",1],["ginger",1],["rice",0.4]],steps:"Marinate chicken in yogurt & spices. Sear 5 min. Make sauce with onion, garlic, ginger, tomatoes, coconut milk. Simmer 15 min. Serve over rice."},
   {id:"c03",name:"Chicken Fajita Bowls",time:20,protein:43,cal:490,carbs:42,fat:15,cat:"Chicken",tags:["mexican","fast","family-friendly","toddler-friendly"],ing:[["chicken breast",1.5],["bell peppers",3],["onion",1],["rice",0.4],["shredded cheese",1],["avocado",1],["lime",2]],steps:"Season chicken with cumin, chili, garlic. Cook with peppers & onions. Serve over rice with cheese & avocado."},
@@ -274,17 +336,32 @@ function ws(pool,count){if(pool.length<=count)return[...pool];const w=pool.map(m
 function genPlan(db,f,cnt){const pinned=db.filter(m=>m.pinned).slice(0,cnt);const pids=new Set(pinned.map(m=>m.id));const pool=filt(db.filter(m=>!m.snoozedUntil||Date.now()>m.snoozedUntil),f).filter(m=>!pids.has(m.id));return[...pinned,...ws(pool,cnt-pinned.length)].slice(0,cnt);}
 
 function encPlan(payload){
-  let json=JSON.stringify(payload);
-  json=json.replace(/"family-friendly","toddler-friendly"/g,'"~ft"').replace(/"toddler-friendly"/g,'"~t"').replace(/"family-friendly"/g,'"~f"');
-  const b64=btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-  return b64;
+  // Only keep fields needed for shared view — strip everything else
+  const slim={
+    v:sv,
+    g:payload.generated,
+    e:payload.extras&&payload.extras.length?payload.extras.map(e=>({n:e.name,q:e.qty,z:e.zone,nt:e.note})):[],
+    m:payload.meals.map(m=>({
+      n:m.name,c:m.cat,t:m.time,p:m.protein,k:m.cal,b:m.carbs,f:m.fat,
+      s:m.steps,i:m.ing,tg:m.tags&&m.tags.includes("toddler-friendly")?1:0
+    }))
+  };
+  const json=JSON.stringify(slim);
+  return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 function decPlan(raw){
   const b64=raw.replace(/-/g,'+').replace(/_/g,'/');
   const padded=b64+('==='.slice((b64.length+3)%4||4));
-  let json=decodeURIComponent(escape(atob(padded)));
-  json=json.replace(/"~ft"/g,'"family-friendly","toddler-friendly"').replace(/"~t"/g,'"toddler-friendly"').replace(/"~f"/g,'"family-friendly"');
-  return JSON.parse(json);
+  const d=JSON.parse(decodeURIComponent(escape(atob(padded))));
+  // Support both new slim format and old format
+  if(d.m){
+    return{
+      servings:d.v,generated:d.g,
+      extras:(d.e||[]).map(e=>({name:e.n,qty:e.q,zone:e.z,note:e.nt})),
+      meals:d.m.map(m=>({name:m.n,cat:m.c,time:m.t,protein:m.p,cal:m.k,carbs:m.b,fat:m.f,steps:m.s,ing:m.i,tags:m.tg?["family-friendly","toddler-friendly"]:["family-friendly"]}))
+    };
+  }
+  return d;
 }
 
 function SharedView({plan}){
@@ -328,7 +405,7 @@ function SharedView({plan}){
                 <div style={{padding:"10px 14px"}}>
                   <p style={{fontSize:"0.8rem",color:"#6B6357",lineHeight:1.55,marginBottom:8}}>{meal.steps}</p>
                   <button onClick={()=>setOi(p=>({...p,[i]:!p[i]}))} style={{background:"none",border:"none",cursor:"pointer",fontSize:"0.72rem",fontWeight:700,color:"#1E4D2B"}}>{oi[i]?"▲ Hide":"▼ Show"} ingredients ({meal.ing&&meal.ing.length})</button>
-                  {oi[i]&&<div style={{marginTop:6}}>{meal.ing&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return<div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:"0.77rem",padding:"2px 0",borderBottom:"1px solid #F3EFE8"}}><span>{sq%1===0?sq:sq.toFixed(1)} — {item}</span></div>;})}</div>}
+                  {oi[i]&&<div style={{marginTop:6}}>{meal.ing&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return<div key={item} style={{display:"flex",justifyContent:"space-between",fontSize:"0.77rem",padding:"2px 0",borderBottom:"1px solid #F3EFE8"}}><span>{fmtQty(item,sq)}{item}</span></div>;})}</div>}
                 </div>
               </div>
             );
@@ -517,7 +594,7 @@ function App(){
                     <button className="ing-toggle" onClick={()=>setEi(p=>({...p,[meal.id]:!p[meal.id]}))}>
                       {sI?"▲ Hide":"▼ Show"} ingredients ({meal.ing.length})
                     </button>
-                    {sI&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return(<div key={item} className="ing-row"><span>{sq%1===0?sq:sq.toFixed(1)} — {item}</span><span className="ing-price">${gp(item,true,sq).toFixed(2)}</span></div>);})}
+                    {sI&&meal.ing.map(([item,qty])=>{const sq=qty*sc;return(<div key={item} className="ing-row"><span>{fmtQty(item,sq)}{item}</span><span className="ing-price">${gp(item,true,sq).toFixed(2)}</span></div>);})}
                   </div>
                   <div className="store-row">
                     <div className={"schip"+(fw2?" best":"")}><div className="schip-name">🛒 Fry's</div><div className="schip-price">${fc.toFixed(2)}</div>{fw2&&<div className="schip-badge">BEST</div>}</div>
